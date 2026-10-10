@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#091c3e" stroke="#ffcc00" stroke-width="4"/>
+  <text x="50" y="58" text-anchor="middle" fill="#ffcc00" font-size="24" font-weight="900" font-family="Arial">L1</text>
+  <text x="50" y="82" text-anchor="middle" fill="#fff" font-size="10" font-weight="700" font-family="Arial">MCDONALD'S</text>
+</svg>
