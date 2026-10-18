@@ -17,6 +17,7 @@ const NAV = [
   { slug: "nfl", name: "NFL" },
   { slug: "mlb", name: "MLB" },
   { slug: "nhl", name: "NHL" },
+  { slug: "casual-clothing", name: "Casual" },
 ];
 
 export default function RootLayout({ children }) {
