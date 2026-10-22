@@ -3,7 +3,6 @@ import { getProducts } from "../../../lib/products";
 import ProductCard from "../../../components/ProductCard";
 
 const PER_PAGE = 48;
-
 const CATEGORY_NAMES = {
   "national-team": "National Teams", "premier-league": "Premier League",
   "la-liga": "La Liga", "serie-a": "Serie A", "bundesliga": "Bundesliga",
@@ -13,7 +12,6 @@ const CATEGORY_NAMES = {
   "efl-championship-and-other": "EFL Championship", "mls": "MLS"
 };
 
-// Global item types (works for any league)
 const TYPE_FILTERS = [
   { key: "all", label: "All", match: null },
   { key: "jersey", label: "Jerseys", match: "jersey" },
@@ -25,7 +23,6 @@ const TYPE_FILTERS = [
   { key: "retro", label: "Retro", match: "retro" },
 ];
 
-// Extract the year to sort newest to oldest
 function getYear(name) {
   const m = name.match(/(20\d{2}|19\d{2})/);
   return m ? parseInt(m[0]) : 0;
@@ -47,10 +44,8 @@ export default async function CategoryPage({ params, searchParams }) {
 
   const name = CATEGORY_NAMES[slug] || slug.replace(/-/g, " ").toUpperCase();
 
-  // 1. Find all available clubs in this league to build the dropdown
   const availableClubs = new Set();
   all.forEach(p => {
-    // If it has a specific club category, grab it
     if (p.categories && p.categories.length > 1) {
       p.categories.forEach(c => {
         if (c !== slug && !TYPE_FILTERS.some(t => t.match === c)) {
@@ -61,7 +56,6 @@ export default async function CategoryPage({ params, searchParams }) {
   });
   const clubList = Array.from(availableClubs).sort();
 
-  // 2. Apply Type Filter (Jerseys, Shorts, etc.)
   if (type !== "all") {
     const filter = TYPE_FILTERS.find(f => f.key === type);
     if (filter && filter.match) {
@@ -69,12 +63,10 @@ export default async function CategoryPage({ params, searchParams }) {
     }
   }
 
-  // 3. Apply Club Filter (Man City, Barcelona, etc.)
   if (club !== "all") {
     all = all.filter(p => (p.categories || []).includes(club));
   }
 
-  // 4. Sort Newest to Oldest
   all.sort((a, b) => getYear(b.name) - getYear(a.name));
 
   const totalPages = Math.ceil(all.length / PER_PAGE) || 1;
@@ -85,7 +77,6 @@ export default async function CategoryPage({ params, searchParams }) {
       <p className="eyebrow"><Link href="/shop" prefetch={false}>Shop</Link> / {name}</p>
       <h1>{name} ({all.length})</h1>
       
-      {/* FILTER PILLS */}
       <div className="subFilters" style={{ marginBottom: '16px' }}>
         {TYPE_FILTERS.map(f => (
           <Link 
@@ -99,20 +90,15 @@ export default async function CategoryPage({ params, searchParams }) {
         ))}
       </div>
 
-      {/* CLUB DROPDOWN */}
       {clubList.length > 0 && (
-        <div style={{ marginBottom: '32px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--muted)', marginRight: '10px', letterSpacing: '1px', textTransform: 'uppercase' }}>Filter by Club:</span>
-          <select 
-            defaultValue={club}
-            onChange={(e) => window.location.href = `/category/${slug}?type=${type}&club=${e.target.value}`}
-            style={{ background: 'var(--card)', color: 'var(--fg)', padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--line)', outline: 'none', fontSize: '13px', cursor: 'pointer' }}
-          >
-            <option value="all">All Clubs</option>
-            {clubList.map(c => (
-              <option key={c} value={c}>{c.replace(/-/g, ' ').toUpperCase()}</option>
-            ))}
-          </select>
+        <div className="subFilters" style={{ marginBottom: '32px' }}>
+          <span style={{ fontSize: '11px', color: 'var(--muted)', marginRight: '10px', letterSpacing: '1px', textTransform: 'uppercase', alignSelf: 'center' }}>Clubs:</span>
+          <Link href={`/category/${slug}?type=${type}&club=all`} prefetch={false} className={club === "all" ? "subFilter active" : "subFilter"}>All Clubs</Link>
+          {clubList.map(c => (
+            <Link key={c} href={`/category/${slug}?type=${type}&club=${c}`} prefetch={false} className={club === c ? "subFilter active" : "subFilter"}>
+              {c.replace(/-/g, ' ').toUpperCase()}
+            </Link>
+          ))}
         </div>
       )}
 
