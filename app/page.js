@@ -14,6 +14,8 @@ const HERO_CATS = [
   { slug: "mlb", name: "MLB" },
   { slug: "nhl", name: "NHL" },
   { slug: "casual-clothing", name: "Casual" },
+  { slug: "efl-championship-and-other", name: "EFL Championship" },
+  { slug: "mls", name: "MLS" },
 ];
 
 export default function Home() {
