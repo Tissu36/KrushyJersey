@@ -3,8 +3,8 @@ import Link from "next/link";
 export default function ProductCard({ product }) {
   const img = product.images && product.images[0] ? product.images[0] : null;
   
-  // Point to the GitHub Release download URL for the images
-  const imgUrl = img ? `https://github.com/Tissu36/KrushyJersey/releases/download/v1.0/images/${img}` : null;
+  // Point to GitHub Pages for the images
+  const imgUrl = img ? `https://tissu36.github.io/KrushyJersey/${img}` : null;
 
   return (
     <Link className="productCard" href={`/product/${product.slug}`} prefetch={false}>
