@@ -238,3 +238,15 @@ html, body {
   height: 100vh !important;
   overflow: hidden;
 }
+
+/* Fix mobile horizontal scrolling and force full width */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  position: relative;
+}
+#intro-overlay {
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden;
+}
