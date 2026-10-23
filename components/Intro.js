@@ -20,20 +20,20 @@ export default function Intro() {
   };
 
   useEffect(() => {
-    const hasSeenIntro = localStorage.getItem("krushy_intro_seen");
+    const hasSeenIntro = localStorage.getItem("krushy_intro_v2");
     if (hasSeenIntro) return; 
     
     setVisible(true);
-    localStorage.setItem("krushy_intro_seen", "true");
+    localStorage.setItem("krushy_intro_v2", "true");
 
-    const t1 = setTimeout(() => setActiveScene(2), 5600);
-    const t2 = setTimeout(() => setActiveScene(3), 13600);
-    const t3 = setTimeout(() => setActiveScene(4), 20800);
-    const tEnd = setTimeout(() => skip(), 26000);
+    const t1 = setTimeout(() => setActiveScene(2), 6500);
+    const t2 = setTimeout(() => setActiveScene(3), 14500);
+    const t3 = setTimeout(() => setActiveScene(4), 22500);
+    const tEnd = setTimeout(() => skip(), 30000);
 
     let start = Date.now();
     const timer = setInterval(() => {
-      const pct = Math.min(((Date.now() - start) / 26000) * 100, 100);
+      const pct = Math.min(((Date.now() - start) / 30000) * 100, 100);
       const fill = document.getElementById("intro-prog");
       if (fill) fill.style.width = pct + "%";
     }, 50);
@@ -45,6 +45,8 @@ export default function Intro() {
   }, []);
 
   if (!visible) return null;
+
+  const getImg = (name) => "/images/images/" + name;
 
   return (
     <div id="intro-overlay" className={exiting ? "exiting" : ""}>
@@ -62,39 +64,24 @@ export default function Intro() {
           <span className="ll"><span className="lk">KRUSHY</span></span>
           <span className="ll"><span className="lj">JERSEY</span></span>
           <div className="ld"></div>
-          <div className="lt">Your game. Your style.</div>
+          <div className="lt">Your game.&nbsp; Your style.</div>
           <div className="ls">Football jerseys &mdash; simple prices</div>
+        </div>
+
+        <div className="speaker-box">
+          <div className="speaker-name">KRUSHY</div>
+          <div className="speaker-dialogue">
+            <em>“Yo.”</em> Krushy here. Look — I’m not gonna give you some corporate speech. You know what this is. <em>Football jerseys.</em> Real ones. The kind that feel like they’ve got a story stitched into the fabric. From <em>retro classics</em> to the latest drops — I got you. Simple prices. No nonsense. Just pure, unadulterated football culture. <em>Let’s get it.</em>
+          </div>
         </div>
       </div>
 
       <div className={`scene ${activeScene === 2 ? "active" : ""}`} id="s2">
         <div className="sh">Every Club. Every League.</div>
         <div className="jr">
-          <div className="jc">
-            <div className="ji"><div className="jw">
-              <img className="jp" src="https://krushy-jersey-gold.vercel.app/images/0361a4b1ed71e9d2.jpg" alt="Arsenal" onError={(e) => e.target.classList.add('h')} />
-            </div></div>
-            <span className="jl">Premier League</span>
-          </div>
-          <div className="jc">
-            <div className="ji"><div className="jw">
-              <img className="jp" src="https://krushy-jersey-gold.vercel.app/images/1bcf3b083bf349bf.jpg" alt="Barcelona" onError={(e) => e.target.classList.add('h')} />
-            </div></div>
-            <span className="jl">La Liga</span>
-          </div>
-          <div className="jc">
-            <div className="ji"><div className="jw">
-              <img className="jp" src="https://krushy-jersey-gold.vercel.app/images/9cc9aa286ecf4656.jpg" alt="Real Madrid" onError={(e) => e.target.classList.add('h')} />
-            </div></div>
-            <span className="jl">La Liga</span>
-          </div>
-        </div>
-        <div className="ls2">
-          <span className="li">Premier League</span><span className="ld2"></span>
-          <span className="li">La Liga</span><span className="ld2"></span>
-          <span className="li">Serie A</span><span className="ld2"></span>
-          <span className="li">Bundesliga</span><span className="ld2"></span>
-          <span className="li">World Cup 2026</span>
+          <div className="jc"><div className="ji"><div className="jw"><img src={getImg("0361a4b1ed71e9d2.jpg")} alt="Arsenal" /></div></div><span className="jl">Premier League</span></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src={getImg("1bcf3b083bf349bf.jpg")} alt="Barcelona" /></div></div><span className="jl">La Liga</span></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src={getImg("9cc9aa286ecf4656.jpg")} alt="Real Madrid" /></div></div><span className="jl">La Liga</span></div>
         </div>
       </div>
 
@@ -102,25 +89,11 @@ export default function Intro() {
         <div className="ey">More than one team</div>
         <div className="sn">16,000+</div>
         <div className="sl">Jerseys across every club, league &amp; era</div>
-        <div className="mr">
-          <div className="mj"><div className="mw">
-            <img className="mp" src="https://krushy-jersey-gold.vercel.app/images/2d9abf71ee7846de.jpg" alt="Argentina" />
-          </div><div className="ml">National</div></div>
-          <div className="mj"><div className="mw">
-            <img className="mp" src="https://krushy-jersey-gold.vercel.app/images/360feff14ccaa707.jpg" alt="AC Milan" />
-          </div><div className="ml">Retro</div></div>
-          <div className="mj"><div className="mw">
-            <img className="mp" src="https://krushy-jersey-gold.vercel.app/images/33bcd439d5cee702.jpg" alt="Arsenal" />
-          </div><div className="ml">Premier</div></div>
-          <div className="mj"><div className="mw">
-            <img className="mp" src="https://krushy-jersey-gold.vercel.app/images/65deb957511fadd7.jpg" alt="Barcelona" />
-          </div><div className="ml">La Liga</div></div>
-        </div>
       </div>
 
       <div className={`scene ${activeScene === 4 ? "active" : ""}`} id="s4">
         <div className="fn">KrushyJersey</div>
-        <div className="ft">Football Jerseys &nbsp;&middot;&nbsp; Simple Prices</div>
+        <div className="ft">Football Jerseys &middot; Simple Prices</div>
         <div className="fd"></div>
         <button className="cta-btn" onClick={handleCta}>Shop Now</button>
       </div>
