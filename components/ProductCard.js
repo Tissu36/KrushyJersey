@@ -9,7 +9,7 @@ export default function ProductCard({ product }) {
     <Link className="productCard" href={"/product/" + product.slug} prefetch={false}>
       <div className="productVisual" style={{ background: "#0f0f0f" }}>
         {imgUrl ? (
-          <img src={imgUrl} alt={product.name} loading="lazy" width="300" height="400" onError={(e) => { e.target.style.display = "none"; }} />
+          <img src={imgUrl} alt={product.name} loading="lazy" width="300" height="400" />
         ) : (
           <div style={{ width: "100%", height: "100%", background: "#0f0f0f" }}></div>
         )}
