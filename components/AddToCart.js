@@ -23,18 +23,11 @@ export default function AddToCart({ product }) {
   const sizeUp = SIZES.find(s => s.code === size)?.up || 0;
   const nameAndNum = !canCustomize ? 0 : (name && number ? 10 : name ? 6 : number ? 6 : 0);
   const patchCost = !canCustomize ? 0 : (PATCHES.find(p => p.key === patch)?.price || 0);
-  const personalization = nameAndNum + patchCost + sizeUp;
-  const total = product.price + personalization;
+  const total = product.price + nameAndNum + patchCost + sizeUp;
 
   const add = () => {
     const cart = JSON.parse(localStorage.getItem("krushy_cart") || "[]");
-    cart.push({
-      slug: product.slug, name: product.name, price: product.price,
-      personalization, lineTotal: total, image: product.images[0],
-      size, customName: canCustomize ? name : "",
-      customNumber: canCustomize ? number : "",
-      patch: canCustomize ? patch : "none", qty: 1,
-    });
+    cart.push({ slug: product.slug, name: product.name, price: product.price, personalization: nameAndNum + patchCost + sizeUp, lineTotal: total, image: product.images[0], size, customName: name, customNumber: number, patch, qty: 1 });
     localStorage.setItem("krushy_cart", JSON.stringify(cart));
     window.location.href = "/cart";
   };
@@ -46,7 +39,7 @@ export default function AddToCart({ product }) {
         <div className="sizeRow">
           {SIZES.map(s => (
             <button key={s.code} type="button" className={"sizePill" + (size === s.code ? " active" : "")} onClick={() => setSize(s.code)}>
-              {s.label} {s.up ? <span className="sizeUp">+${s.up}</span> : null}
+              {s.label} {s.up ? <span className="sizeUp">+\${s.up}</span> : null}
             </button>
           ))}
         </div>
@@ -56,25 +49,15 @@ export default function AddToCart({ product }) {
         <>
           <div className="pdpRow">
             <label className="pdpLabel">BADGE (CHOOSE ONE)</label>
-            <div className="patchGrid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+            <div className="patchGrid" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
               {PATCHES.map(p => (
                 <button key={p.key} type="button" className={"patchCard" + (patch === p.key ? " active" : "")} onClick={() => setPatch(p.key)}>
-                  <div className="patchIconWrap">
-                    {p.img ? (
-                      <img src={p.img} alt={p.label} className="patchImg" />
-                    ) : (
-                      <div className="patchEmpty" />
-                    )}
-                  </div>
-                  <div className="patchMeta">
-                    <span className="patchTitle">{p.label}</span>
-                    <span className="patchCost">{p.price === 0 ? "FREE" : "+$" + p.price}</span>
-                  </div>
+                  <div className="patchIconWrap">{p.img ? <img src={p.img} className="patchImg" /> : <div className="patchEmpty" />}</div>
+                  <div className="patchMeta"><span className="patchTitle">{p.label}</span><span className="patchCost">{p.price === 0 ? "FREE" : "+\$" + p.price}</span></div>
                 </button>
               ))}
             </div>
           </div>
-
           <div className="pdpRow">
             <label className="pdpLabel">CUSTOM NAME &amp; NUMBER</label>
             <div className="nameNumberRow">
@@ -86,13 +69,11 @@ export default function AddToCart({ product }) {
       )}
 
       <div className="priceBreakdown">
-        <p><span>Jersey</span><strong>${product.price.toFixed(2)}</strong></p>
-        {sizeUp > 0 && <p><span>Size upcharge</span><strong>+${sizeUp.toFixed(2)}</strong></p>}
-        {personalization - sizeUp > 0 && <p><span>Personalization</span><strong>+${(personalization - sizeUp).toFixed(2)}</strong></p>}
-        <p className="grandTotal"><span>Total</span><strong>${total.toFixed(2)} USD</strong></p>
+        <p><span>Jersey</span><strong>\${product.price.toFixed(2)}</strong></p>
+        {total > product.price && <p><span>Personalization</span><strong>+\${(total - product.price).toFixed(2)}</strong></p>}
+        <p className="grandTotal"><span>Total</span><strong>\${total.toFixed(2)} USD</strong></p>
       </div>
-
-      <button className="buy" onClick={add}>ADD TO CART · ${total.toFixed(2)}</button>
+      <button className="buy" onClick={add}>ADD TO CART · \${total.toFixed(2)}</button>
     </div>
   );
 }
