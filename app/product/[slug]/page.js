@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProduct } from "../../../lib/products";
 import AddToCart from "../../../components/AddToCart";
-import ImageGallery from "../../../components/ImageGallery";
+import ProductGallery from "../../../components/ProductGallery";
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;
@@ -12,7 +12,7 @@ export default async function ProductPage({ params }) {
   
   return (
     <main className="productPage">
-      <ImageGallery images={imgs} name={product.name} />
+      <ProductGallery images={imgs} name={product.name} />
       <div className="productDetails">
         <p className="eyebrow"><Link href={`/category/${product.categorySlug}`}>{product.category}</Link></p>
         <h1>{product.name}</h1>

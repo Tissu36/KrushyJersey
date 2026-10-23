@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 
-export default function ImageGallery({ images, name }) {
+export default function ProductGallery({ images, name }) {
   const [activeImg, setActiveImg] = useState(images[0] || null);
 
+  // THIS IS THE EXACT PATH THAT MADE THE MILAN HOODIES WORK
   const getUrl = (img) => img.startsWith('images/') ? `/${img}` : `/images/images/${img}`;
 
   if (!images || images.length === 0) {
