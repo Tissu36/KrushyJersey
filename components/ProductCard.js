@@ -1,15 +1,10 @@
 import Link from "next/link";
 
 export default function ProductCard({ product }) {
-  // If the image is a string, use it. If not, fail gracefully.
-  let imgName = product.images && product.images[0] ? product.images[0] : null;
+  const img = product.images && product.images[0] ? product.images[0] : null;
   
-  // Clean up the name just in case the zip added 'images/' to the file name
-  if (imgName && imgName.startsWith('images/')) {
-    imgName = imgName.replace('images/', '');
-  }
-
-  const imgUrl = imgName ? `/images/${imgName}` : null;
+  // If the image already has 'images/' in the name, don't double it
+  const imgUrl = img ? (img.startsWith('images/') ? `/${img}` : `/images/images/${img}`) : null;
 
   return (
     <Link className="productCard" href={`/product/${product.slug}`} prefetch={false}>
