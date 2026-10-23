@@ -2,6 +2,9 @@ import Link from "next/link";
 
 export default function ProductCard({ product }) {
   const img = product.images && product.images[0] ? product.images[0] : null;
+  
+  // The images in the zip are saved as 'images/7b860bd7e570af9a.jpg'
+  // So the path should just be /images/7b860bd7e570af9a.jpg
   const imgUrl = img ? (img.startsWith('images/') ? `/${img}` : `/images/images/${img}`) : null;
 
   return (
@@ -14,7 +17,6 @@ export default function ProductCard({ product }) {
             loading="lazy" 
             width="300" 
             height="400" 
-            onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.classList.add('jerseyMock'); e.target.parentNode.innerText = product.name; }}
           />
         ) : (
           <div className="jerseyMock">{product.name}</div>
