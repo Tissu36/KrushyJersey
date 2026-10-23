@@ -2,10 +2,7 @@ import Link from "next/link";
 
 export default function ProductCard({ product }) {
   const img = product.images && product.images[0] ? product.images[0] : null;
-  
-  // The images in the zip are saved as 'images/7b860bd7e570af9a.jpg'
-  // So the path should just be /images/7b860bd7e570af9a.jpg
-  const imgUrl = img ? (img.startsWith('images/') ? `/${img}` : `/images/images/${img}`) : null;
+  const imgUrl = img ? (img.startsWith('images/') ? `/${img}` : `/images/${img}`) : null;
 
   return (
     <Link className="productCard" href={`/product/${product.slug}`} prefetch={false}>
@@ -15,11 +12,15 @@ export default function ProductCard({ product }) {
             src={imgUrl} 
             alt={product.name} 
             loading="lazy" 
-            width="300" 
-            height="400" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => { 
+              // If the image fails to load, hide it and show a black box
+              e.currentTarget.style.display = 'none'; 
+              e.currentTarget.parentNode.innerHTML = `<div style="width:100%;height:100%;background:#0f0f0f"></div>`; 
+            }}
           />
         ) : (
-          <div className="jerseyMock">{product.name}</div>
+          <div style={{ width: '100%', height: '100%', background: '#0f0f0f' }}></div>
         )}
       </div>
       <div className="productInfo">
