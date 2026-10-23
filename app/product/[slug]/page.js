@@ -7,22 +7,19 @@ export default async function ProductPage({ params }) {
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) notFound();
-  const imgs = product.images || [];
+  
+  const imgs = (product.images || []).map(img => img.startsWith('images/') ? img.replace('images/', '') : img);
   
   return (
     <main className="productPage">
       <div className="gallery">
         <div className="bigVisual">
-          {imgs[0] ? (
-            <img src={`https://tissu36.github.io/KrushyJersey/${imgs[0]}`} alt={product.name} />
-          ) : (
-            <div className="jerseyMock">{product.name}</div>
-          )}
+          {imgs[0] ? <img src={`/images/${imgs[0]}`} alt={product.name} /> : <div className="jerseyMock">{product.name}</div>}
         </div>
         {imgs.length > 1 && (
           <div className="thumbs">
             {imgs.slice(0, 8).map((im, i) => (
-              <img key={i} src={`https://tissu36.github.io/KrushyJersey/${im}`} alt={`${product.name} ${i + 1}`} loading="lazy" />
+              <img key={i} src={`/images/${im}`} alt={`${product.name} ${i + 1}`} loading="lazy" />
             ))}
           </div>
         )}

@@ -1,10 +1,15 @@
 import Link from "next/link";
 
 export default function ProductCard({ product }) {
-  const img = product.images && product.images[0] ? product.images[0] : null;
+  // If the image is a string, use it. If not, fail gracefully.
+  let imgName = product.images && product.images[0] ? product.images[0] : null;
   
-  // Point to GitHub Pages for the images
-  const imgUrl = img ? `https://tissu36.github.io/KrushyJersey/${img}` : null;
+  // Clean up the name just in case the zip added 'images/' to the file name
+  if (imgName && imgName.startsWith('images/')) {
+    imgName = imgName.replace('images/', '');
+  }
+
+  const imgUrl = imgName ? `/images/${imgName}` : null;
 
   return (
     <Link className="productCard" href={`/product/${product.slug}`} prefetch={false}>
