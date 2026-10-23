@@ -81,7 +81,6 @@ export default function AddToCart({ product }) {
               <input className="pdpInput" type="text" placeholder="NAME" maxLength={12} value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
               <input className="pdpInput numInput" type="text" placeholder="##" maxLength={2} value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, ""))} />
             </div>
-            <p className="pdpHint">Name + Number: +$10 · Only one: +$6</p>
           </div>
         </>
       )}
