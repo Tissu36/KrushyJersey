@@ -11,7 +11,6 @@ const PATCHES = [
   { key: "none", label: "No Badge", price: 0 },
   { key: "league", label: "League Patch", price: 3, img: "/badges/la-liga.svg" },
   { key: "ucl", label: "Champions League", price: 5, img: "/badges/ucl.svg" },
-  { key: "both", label: "Both Patches", price: 7, dual: true },
 ];
 
 export default function AddToCart({ product }) {
@@ -57,13 +56,11 @@ export default function AddToCart({ product }) {
         <>
           <div className="pdpRow">
             <label className="pdpLabel">BADGE (CHOOSE ONE)</label>
-            <div className="patchGrid">
+            <div className="patchGrid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
               {PATCHES.map(p => (
                 <button key={p.key} type="button" className={"patchCard" + (patch === p.key ? " active" : "")} onClick={() => setPatch(p.key)}>
                   <div className="patchIconWrap">
-                    {p.dual ? (
-                      <><img src="/badges/la-liga.svg" alt="" className="patchImg halfL" /><img src="/badges/ucl.svg" alt="" className="patchImg halfR" /></>
-                    ) : p.img ? (
+                    {p.img ? (
                       <img src={p.img} alt={p.label} className="patchImg" />
                     ) : (
                       <div className="patchEmpty" />
