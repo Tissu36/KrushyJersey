@@ -1,24 +1,21 @@
 import Link from "next/link";
 
 export default function ProductCard({ product }) {
-  // If there are no images left after the cleanup, show a black box
-  const hasImg = product.images && product.images.length > 0;
-  const imgUrl = hasImg ? (product.images[0].startsWith('images/') ? `/${product.images[0]}` : `/images/${product.images[0]}`) : null;
+  const img = product.images && product.images[0] ? product.images[0] : null;
+  const imgUrl = img ? (img.startsWith('images/') ? `/${img}` : `/images/${img}`) : null;
 
   return (
     <Link className="productCard" href={`/product/${product.slug}`} prefetch={false}>
-      <div className="productVisual">
-        {hasImg ? (
+      <div className="productVisual" style={{ background: '#0f0f0f', position: 'relative' }}>
+        {imgUrl ? (
           <img 
             src={imgUrl} 
             alt={product.name} 
             loading="lazy" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 2 }}
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', background: '#0f0f0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '10px' }}>
-            NO IMAGE
-          </div>
+          <div style={{ width: '100%', height: '100%', background: '#0f0f0f' }}></div>
         )}
       </div>
       <div className="productInfo">

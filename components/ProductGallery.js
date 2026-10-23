@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function ProductGallery({ images, name }) {
   const [activeImg, setActiveImg] = useState(images[0] || null);
 
-  const getUrl = (img) => img.startsWith('images/') ? `/${img}` : `/images/images/${img}`;
+  const getUrl = (img) => img.startsWith('images/') ? `/${img}` : `/images/${img}`;
 
   if (!images || images.length === 0) {
     return <div className="gallery"><div className="bigVisual jerseyMock">{name}</div></div>;
@@ -12,7 +12,7 @@ export default function ProductGallery({ images, name }) {
 
   return (
     <div className="gallery">
-      <div className="bigVisual">
+      <div className="bigVisual" style={{ background: '#0f0f0f' }}>
         {activeImg ? <img src={getUrl(activeImg)} alt={name} /> : <div className="jerseyMock">{name}</div>}
       </div>
       {images.length > 1 && (
