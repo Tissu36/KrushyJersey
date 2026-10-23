@@ -2,20 +2,16 @@
 import { useState } from "react";
 
 const SIZES = [
-  { code: "S",   label: "S" },
-  { code: "M",   label: "M" },
-  { code: "L",   label: "L" },
-  { code: "XL",  label: "XL" },
-  { code: "XXL", label: "XXL" },
-  { code: "3XL", label: "3XL", up: 2 },
-  { code: "4XL", label: "4XL", up: 2 },
+  { code: "S", label: "S" }, { code: "M", label: "M" }, { code: "L", label: "L" },
+  { code: "XL", label: "XL" }, { code: "XXL", label: "XXL" },
+  { code: "3XL", label: "3XL", up: 2 }, { code: "4XL", label: "4XL", up: 2 },
 ];
 
 const PATCHES = [
-  { key: "none",   label: "No Badge",         price: 0 },
-  { key: "league", label: "League Patch",     price: 3 },
-  { key: "ucl",    label: "Champions League", price: 5 },
-  { key: "both",   label: "Both Patches",     price: 7 },
+  { key: "none", label: "No Badge", price: 0 },
+  { key: "league", label: "League Patch", price: 3, img: "/badges/la-liga.svg" },
+  { key: "ucl", label: "Champions League", price: 5, img: "/badges/ucl.svg" },
+  { key: "both", label: "Both Patches", price: 7, dual: true },
 ];
 
 export default function AddToCart({ product }) {
@@ -50,27 +46,29 @@ export default function AddToCart({ product }) {
         <label className="pdpLabel">SIZE</label>
         <div className="sizeRow">
           {SIZES.map(s => (
-            <button key={s.code} type="button"
-              className={"sizePill" + (size === s.code ? " active" : "")}
-              onClick={() => setSize(s.code)}>
-              {s.label}
-              {s.up ? <span className="sizeUp">+${s.up}</span> : null}
+            <button key={s.code} type="button" className={"sizePill" + (size === s.code ? " active" : "")} onClick={() => setSize(s.code)}>
+              {s.label} {s.up ? <span className="sizeUp">+${s.up}</span> : null}
             </button>
           ))}
         </div>
-        <p className="pdpHint">S: chest 36-38&quot; · M: 38-40&quot; · L: 40-42&quot; · XL: 42-44&quot; · XXL: 44-46&quot;</p>
       </div>
 
       {canCustomize && (
         <>
           <div className="pdpRow">
-            <label className="pdpLabel">BADGE</label>
+            <label className="pdpLabel">BADGE (CHOOSE ONE)</label>
             <div className="patchGrid">
               {PATCHES.map(p => (
-                <button key={p.key} type="button"
-                  className={"patchCard" + (patch === p.key ? " active" : "")}
-                  onClick={() => setPatch(p.key)}>
-                  <div className="patchIconWrap"><div className="patchEmpty" /></div>
+                <button key={p.key} type="button" className={"patchCard" + (patch === p.key ? " active" : "")} onClick={() => setPatch(p.key)}>
+                  <div className="patchIconWrap">
+                    {p.dual ? (
+                      <><img src="/badges/la-liga.svg" alt="" className="patchImg halfL" /><img src="/badges/ucl.svg" alt="" className="patchImg halfR" /></>
+                    ) : p.img ? (
+                      <img src={p.img} alt={p.label} className="patchImg" />
+                    ) : (
+                      <div className="patchEmpty" />
+                    )}
+                  </div>
                   <div className="patchMeta">
                     <span className="patchTitle">{p.label}</span>
                     <span className="patchCost">{p.price === 0 ? "FREE" : "+$" + p.price}</span>
@@ -83,10 +81,8 @@ export default function AddToCart({ product }) {
           <div className="pdpRow">
             <label className="pdpLabel">CUSTOM NAME &amp; NUMBER</label>
             <div className="nameNumberRow">
-              <input className="pdpInput" type="text" placeholder="NAME" maxLength={12}
-                value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
-              <input className="pdpInput numInput" type="text" placeholder="##" maxLength={2}
-                value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, ""))} />
+              <input className="pdpInput" type="text" placeholder="NAME" maxLength={12} value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
+              <input className="pdpInput numInput" type="text" placeholder="##" maxLength={2} value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, ""))} />
             </div>
             <p className="pdpHint">Name + Number: +$10 · Only one: +$6</p>
           </div>
@@ -96,9 +92,7 @@ export default function AddToCart({ product }) {
       <div className="priceBreakdown">
         <p><span>Jersey</span><strong>${product.price.toFixed(2)}</strong></p>
         {sizeUp > 0 && <p><span>Size upcharge</span><strong>+${sizeUp.toFixed(2)}</strong></p>}
-        {personalization - sizeUp > 0 && (
-          <p><span>Personalization</span><strong>+${(personalization - sizeUp).toFixed(2)}</strong></p>
-        )}
+        {personalization - sizeUp > 0 && <p><span>Personalization</span><strong>+${(personalization - sizeUp).toFixed(2)}</strong></p>}
         <p className="grandTotal"><span>Total</span><strong>${total.toFixed(2)} USD</strong></p>
       </div>
 

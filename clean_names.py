@@ -1,16 +1,24 @@
-import json, re
+import json, re, urllib.parse
 
 p = json.load(open("products.json"))
 cleaned = 0
 
 for x in p:
     old_name = x["name"]
-    # Remove percentage signs and the numbers/letters right next to them
-    new_name = re.sub(r'\d+%\s*(off|OFF)?', '', old_name)
-    # Remove leftover double spaces or trailing dashes
+    
+    # 1. Decode URL encoded characters (like %eaehbbd)
+    new_name = urllib.parse.unquote(old_name)
+    
+    # 2. Remove any remaining weird symbols or percent signs
+    new_name = re.sub(r'[%\^&*_+={}\[\]|\\<>]', '', new_name)
+    
+    # 3. Remove weird unicode blocks (like Chinese characters if you only want English)
+    new_name = re.sub(r'[\u4e00-\u9fff]+', '', new_name)
+    
+    # 4. Clean up extra spaces
     new_name = re.sub(r'\s+', ' ', new_name).strip()
     
-    if new_name != old_name:
+    if new_name != old_name and new_name != "":
         x["name"] = new_name
         cleaned += 1
 
