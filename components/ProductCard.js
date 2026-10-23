@@ -1,26 +1,24 @@
 import Link from "next/link";
 
 export default function ProductCard({ product }) {
-  const img = product.images && product.images[0] ? product.images[0] : null;
-  const imgUrl = img ? (img.startsWith('images/') ? `/${img}` : `/images/${img}`) : null;
+  // If there are no images left after the cleanup, show a black box
+  const hasImg = product.images && product.images.length > 0;
+  const imgUrl = hasImg ? (product.images[0].startsWith('images/') ? `/${product.images[0]}` : `/images/${product.images[0]}`) : null;
 
   return (
     <Link className="productCard" href={`/product/${product.slug}`} prefetch={false}>
       <div className="productVisual">
-        {imgUrl ? (
+        {hasImg ? (
           <img 
             src={imgUrl} 
             alt={product.name} 
             loading="lazy" 
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onError={(e) => { 
-              // If the image fails to load, hide it and show a black box
-              e.currentTarget.style.display = 'none'; 
-              e.currentTarget.parentNode.innerHTML = `<div style="width:100%;height:100%;background:#0f0f0f"></div>`; 
-            }}
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', background: '#0f0f0f' }}></div>
+          <div style={{ width: '100%', height: '100%', background: '#0f0f0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '10px' }}>
+            NO IMAGE
+          </div>
         )}
       </div>
       <div className="productInfo">
