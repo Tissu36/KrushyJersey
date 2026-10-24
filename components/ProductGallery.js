@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function ProductGallery({ images, name }) {
   const [activeImg, setActiveImg] = useState(images[0] || null);
-  const getUrl = (img) => `https://raw.githubusercontent.com/Tissu36/KrushyJersey/main/public/images/${img.replace(/^images\//, "")}`;
+  const getUrl = (img) => `/images/${img.replace(/^images\//, "")}`;
 
   if (!images || images.length === 0) {
     return <div className="gallery"><div className="bigVisual jerseyMock">{name}</div></div>;

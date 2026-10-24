@@ -2,8 +2,7 @@ import Link from "next/link";
 
 export default function ProductCard({ product }) {
   const img = product.images && product.images[0] ? product.images[0] : null;
-  // Point directly to the raw images hosted on GitHub
-  const imgUrl = img ? `https://raw.githubusercontent.com/Tissu36/KrushyJersey/main/public/images/${img.replace(/^images\//, "")}` : null;
+  const imgUrl = img ? `/images/${img.replace(/^images\//, "")}` : null;
 
   return (
     <Link className="productCard" href={"/product/" + product.slug} prefetch={false}>
