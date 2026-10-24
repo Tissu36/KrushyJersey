@@ -3,7 +3,9 @@ import { getProducts } from "../../../lib/products";
 import ProductCard from "../../../components/ProductCard";
 
 const PER_PAGE = 48;
-const CATEGORY_NAMES = { "national-team": "National Teams", "premier-league": "Premier League", "la-liga": "La Liga", "serie-a": "Serie A", "bundesliga": "Bundesliga", "ligue-1-mcdonalds": "Ligue 1", "retro-jerseys": "Retro Jerseys", "casual-clothing": "Casual Clothing", "mlb": "MLB", "nba": "NBA", "nfl": "NFL", "nhl": "NHL", "efl-championship-and-other": "EFL Championship", "mls": "MLS" };
+const CATEGORY_NAMES = { "national-team": "National Teams", "premier-league": "Premier League", "la-liga": "La Liga", "serie-a": "Serie A", "bundesliga": "Bundesliga", "ligue-1-mcdonalds": "Ligue 1", "retro-jerseys": "Retro Jerseys", "casual-clothing": "Casual Clothing", "mlb": "MLB", "nba": "NBA", "nfl": "NFL", "nhl": "NHL", "efl-championship-and-other": "EFL", "mls": "MLS" };
+
+const VALID_CLUBS = ["rma", "bar", "atm", "sevilla-almeria", "real-betis", "real-sociedad", "villarreal", "valencia", "bilbao", "celta-espanyol", "osasuna", "malaga-albacete", "cadiz", "oviedo", "zaragoza", "valladolid", "girona-elche", "leganes-granada", "getafe", "rayo", "ars", "che", "liv", "mci", "mun", "tot", "new", "avl", "bha", "cry", "eve", "ful", "lee", "lei", "not", "sou", "wol", "acm", "int", "juv", "nap", "rom", "laz", "ata", "fio", "tor", "bol", "udi", "gen", "sam", "par", "bay", "bvb", "rbl", "b04", "sge", "bmg", "vfb", "wob", "svw"];
 
 const TYPE_FILTERS = [
   { key: "all", label: "All", match: null }, { key: "jersey", label: "Jerseys", match: "jersey" },
@@ -26,7 +28,7 @@ export default async function CategoryPage({ params, searchParams }) {
   const name = CATEGORY_NAMES[slug] || slug.replace(/-/g, " ").toUpperCase();
 
   const availableClubs = new Set();
-  all.forEach(p => { if (p.categories) p.categories.forEach(c => { if (c !== slug && !TYPE_FILTERS.some(t => t.match === c) && !["casual-clothing","national-team","retro-jerseys","jackets","kits"].includes(c)) availableClubs.add(c); }); });
+  all.forEach(p => { if (p.categories) p.categories.forEach(c => { if (VALID_CLUBS.includes(c)) availableClubs.add(c); }); });
   const clubList = Array.from(availableClubs).sort();
 
   if (type !== "all") { const f = TYPE_FILTERS.find(f => f.key === type); if (f && f.match) all = all.filter(p => p.name.toLowerCase().includes(f.match)); }

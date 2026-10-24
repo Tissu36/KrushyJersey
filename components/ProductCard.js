@@ -2,8 +2,7 @@ import Link from "next/link";
 
 export default function ProductCard({ product }) {
   const img = product.images && product.images[0] ? product.images[0] : null;
-  const cleanImg = img ? img.replace(/^images\//, "") : null;
-  const imgUrl = cleanImg ? "/images/images/" + cleanImg : null;
+  const imgUrl = img ? `/images/${img.replace(/^images\//, "")}` : null;
 
   return (
     <Link className="productCard" href={"/product/" + product.slug} prefetch={false}>
