@@ -56,8 +56,8 @@ export default function Intro() {
       <style>{`.scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s ease; padding: 20px; text-align: center; } .scene.on { opacity: 1 !important; }`}</style>
 
       <div className="scene" id="s1">
-        <h1 style={{ fontSize: '60px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0 }}>KRUSHY</h1>
-        <h1 style={{ fontSize: '60px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0, color: '#888' }}>JERSEY</h1>
+        <h1 style={{ fontSize: '40px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0 }}>KRUSHY</h1>
+        <h1 style={{ fontSize: '40px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0, color: '#888' }}>JERSEY</h1>
         <div style={{ marginTop: '20px', maxWidth: '600px', background: 'rgba(0,0,0,0.6)', border: '1px solid #333', padding: '20px', textAlign: 'left' }}>
           <p style={{ fontSize: '16px', fontWeight: 'bold', margin: 0, fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '2px' }}>KRUSHY</p>
           <p style={{ marginTop: '10px', fontSize: '14px', lineHeight: 1.6, color: '#ccc' }}><em>“Yo.”</em> Krushy here. Look — I’m not gonna give you some corporate speech. You know what this is. <em>Football jerseys.</em> Real ones. The kind that feel like they’ve got a story stitched into the fabric. From <em>retro classics</em> to the latest drops — I got you. Simple prices. No nonsense. Just pure, unadulterated football culture. <em>Let’s get it.</em></p>
@@ -80,7 +80,7 @@ export default function Intro() {
       </div>
 
       <div className="scene" id="s4">
-        <h1 style={{ fontSize: '50px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0 }}>KRUSHYJERSEY</h1>
+        <h1 style={{ fontSize: '35px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0 }}>KRUSHYJERSEY</h1>
         <p style={{ letterSpacing: '3px', fontSize: '12px', color: '#888', marginTop: '10px' }}>SIMPLE PRICES</p>
         <a href="/shop" id="cta" style={{ marginTop: '30px', padding: '15px 40px', border: '1px solid #fff', color: '#fff', textDecoration: 'none', letterSpacing: '3px', fontSize: '12px', textTransform: 'uppercase' }}>Shop Now</a>
       </div>
