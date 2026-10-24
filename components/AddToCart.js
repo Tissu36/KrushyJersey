@@ -39,7 +39,7 @@ export default function AddToCart({ product }) {
         <div className="sizeRow">
           {SIZES.map(s => (
             <button key={s.code} type="button" className={"sizePill" + (size === s.code ? " active" : "")} onClick={() => setSize(s.code)}>
-              {s.label} {s.up ? <span className="sizeUp">+\${s.up}</span> : null}
+              {s.label} {s.up ? <span className="sizeUp">+${s.up}</span> : null}
             </button>
           ))}
         </div>
@@ -49,11 +49,11 @@ export default function AddToCart({ product }) {
         <>
           <div className="pdpRow">
             <label className="pdpLabel">BADGE (CHOOSE ONE)</label>
-            <div className="patchGrid" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+            <div className="patchGrid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
               {PATCHES.map(p => (
                 <button key={p.key} type="button" className={"patchCard" + (patch === p.key ? " active" : "")} onClick={() => setPatch(p.key)}>
                   <div className="patchIconWrap">{p.img ? <img src={p.img} className="patchImg" /> : <div className="patchEmpty" />}</div>
-                  <div className="patchMeta"><span className="patchTitle">{p.label}</span><span className="patchCost">{p.price === 0 ? "FREE" : "+\$" + p.price}</span></div>
+                  <div className="patchMeta"><span className="patchTitle">{p.label}</span><span className="patchCost">{p.price === 0 ? "FREE" : "+$" + p.price}</span></div>
                 </button>
               ))}
             </div>
@@ -69,11 +69,11 @@ export default function AddToCart({ product }) {
       )}
 
       <div className="priceBreakdown">
-        <p><span>Jersey</span><strong>\${product.price.toFixed(2)}</strong></p>
-        {total > product.price && <p><span>Personalization</span><strong>+\${(total - product.price).toFixed(2)}</strong></p>}
-        <p className="grandTotal"><span>Total</span><strong>\${total.toFixed(2)} USD</strong></p>
+        <p><span>Jersey</span><strong>${product.price.toFixed(2)}</strong></p>
+        {total > product.price && <p><span>Personalization</span><strong>+${(total - product.price).toFixed(2)}</strong></p>}
+        <p className="grandTotal"><span>Total</span><strong>${total.toFixed(2)} USD</strong></p>
       </div>
-      <button className="buy" onClick={add}>ADD TO CART · \${total.toFixed(2)}</button>
+      <button className="buy" onClick={add}>ADD TO CART · ${total.toFixed(2)}</button>
     </div>
   );
 }
