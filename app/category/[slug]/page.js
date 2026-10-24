@@ -5,8 +5,6 @@ import ProductCard from "../../../components/ProductCard";
 const PER_PAGE = 48;
 const CATEGORY_NAMES = { "national-team": "National Teams", "premier-league": "Premier League", "la-liga": "La Liga", "serie-a": "Serie A", "bundesliga": "Bundesliga", "ligue-1-mcdonalds": "Ligue 1", "retro-jerseys": "Retro Jerseys", "casual-clothing": "Casual Clothing", "mlb": "MLB", "nba": "NBA", "nfl": "NFL", "nhl": "NHL", "efl-championship-and-other": "EFL", "mls": "MLS" };
 
-const VALID_CLUBS = ["rma", "bar", "atm", "sevilla-almeria", "real-betis", "real-sociedad", "villarreal", "valencia", "bilbao", "celta-espanyol", "osasuna", "malaga-albacete", "cadiz", "oviedo", "zaragoza", "valladolid", "girona-elche", "leganes-granada", "getafe", "rayo", "ars", "che", "liv", "mci", "mun", "tot", "new", "avl", "bha", "cry", "eve", "ful", "lee", "lei", "not", "sou", "wol", "acm", "int", "juv", "nap", "rom", "laz", "ata", "fio", "tor", "bol", "udi", "gen", "sam", "par", "bay", "bvb", "rbl", "b04", "sge", "bmg", "vfb", "wob", "svw"];
-
 const TYPE_FILTERS = [
   { key: "all", label: "All", match: null }, { key: "jersey", label: "Jerseys", match: "jersey" },
   { key: "shorts", label: "Shorts", match: "short" }, { key: "hoodie", label: "Hoodies", match: "hoodie" },
@@ -27,8 +25,18 @@ export default async function CategoryPage({ params, searchParams }) {
   if (all.length === 0) return <main className="section"><h1>Category not found</h1></main>;
   const name = CATEGORY_NAMES[slug] || slug.replace(/-/g, " ").toUpperCase();
 
+  // Find ALL clubs that are inside this league
   const availableClubs = new Set();
-  all.forEach(p => { if (p.categories) p.categories.forEach(c => { if (VALID_CLUBS.includes(c)) availableClubs.add(c); }); });
+  all.forEach(p => {
+    if (p.categories) {
+      p.categories.forEach(c => {
+        // Add any category that isn't the league itself or a product type
+        if (c !== slug && !TYPE_FILTERS.some(t => t.match === c) && !["casual-clothing", "retro-jerseys", "jackets", "kits"].includes(c)) {
+          availableClubs.add(c);
+        }
+      });
+    }
+  });
   const clubList = Array.from(availableClubs).sort();
 
   if (type !== "all") { const f = TYPE_FILTERS.find(f => f.key === type); if (f && f.match) all = all.filter(p => p.name.toLowerCase().includes(f.match)); }
@@ -42,9 +50,11 @@ export default async function CategoryPage({ params, searchParams }) {
     <main className="section">
       <p className="eyebrow"><Link href="/shop" prefetch={false}>Shop</Link> / {name}</p>
       <h1>{name} ({all.length})</h1>
+      
       <div className="subFilters" style={{ marginBottom: "16px" }}>
         {TYPE_FILTERS.map(f => <Link key={f.key} className={type === f.key ? "subFilter active" : "subFilter"} href={"/category/" + slug + "?type=" + f.key + "&club=" + club} prefetch={false}>{f.label}</Link>)}
       </div>
+
       {clubList.length > 0 && (
         <div className="subFilters" style={{ marginBottom: "32px" }}>
           <span style={{ fontSize: "11px", color: "var(--muted)", marginRight: "10px", alignSelf: "center" }}>Clubs:</span>
@@ -52,7 +62,9 @@ export default async function CategoryPage({ params, searchParams }) {
           {clubList.map(c => <Link key={c} href={"/category/" + slug + "?type=" + type + "&club=" + c} prefetch={false} className={club === c ? "subFilter active" : "subFilter"}>{c.replace(/-/g, " ").toUpperCase()}</Link>)}
         </div>
       )}
+
       <div className="productGrid">{slice.map(p => <ProductCard key={p.slug} product={p} />)}</div>
+      
       <div className="pagination">
         {page > 1 && <Link href={"/category/" + slug + "?type=" + type + "&club=" + club + "&page=" + (page - 1)}>← Prev</Link>}
         <span>Page {page} of {totalPages}</span>
