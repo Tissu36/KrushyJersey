@@ -124,17 +124,17 @@ export default function Intro() {
       <section className="sc" id="s2" aria-label="Jersey collection">
         <div className="sh">Every Club. Every League.</div>
         <div className="jrow">
-          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/2d9abf71ee7846de.jpg" alt="Spain" /></div></div><div className="jl">Spain</div></div>
-          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/1bcf3b083bf349bf.jpg" alt="Barcelona" /></div></div><div className="jl">Barcelona</div></div>
-          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/9cc9aa286ecf4656.jpg" alt="France" /></div></div><div className="jl">France</div></div>
-          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/0361a4b1ed71e9d2.jpg" alt="Real Madrid" /></div></div><div className="jl">Real Madrid</div></div>
-          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/65deb957511fadd7.jpg" alt="Man City" /></div></div><div className="jl">Man City</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/spain.webp" alt="Spain" /></div></div><div className="jl">Spain</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/barcelona.webp" alt="Barcelona" /></div></div><div className="jl">Barcelona</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/france.webp" alt="France" /></div></div><div className="jl">France</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/realmadrid.webp" alt="Real Madrid" /></div></div><div className="jl">Real Madrid</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/mancity.webp" alt="Man City" /></div></div><div className="jl">Man City</div></div>
         </div>
       </section>
 
       <section className="sc" id="s3" aria-label="Spotlight">
         <div className="s3ey">Icon Edition</div>
-        <div className="hero"><img src="/images/images/1bcf3b083bf349bf.jpg" alt="Ronaldinho 10" /></div>
+        <div className="hero"><img src="/images/images/barcelona.webp" alt="Ronaldinho 10" /></div>
         <div className="s3name">Ronaldinho 10</div>
         <div className="s3sub">Barcelona · Retro Classic</div>
       </section>
