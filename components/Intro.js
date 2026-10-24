@@ -1,51 +1,98 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function Intro() {
-  const [activeScene, setActiveScene] = useState(1);
-  const [exiting, setExiting] = useState(false);
-  const [visible, setVisible] = useState(false); 
   const [started, setStarted] = useState(false);
-  const router = useRouter();
-
-  const skip = () => {
-    setExiting(true);
-    setTimeout(() => setVisible(false), 1600);
-  };
-
-  const handleCta = (e) => {
-    e.preventDefault();
-    skip();
-    setTimeout(() => router.push("/shop"), 1500);
-  };
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const hasSeenIntro = localStorage.getItem("krushy_intro_v3");
-    if (hasSeenIntro) return; 
-    setVisible(true);
+    try {
+      if (sessionStorage.getItem('kj_seen')) return;
+      setVisible(true);
+    } catch(e) { setVisible(true); }
   }, []);
 
   const startIntro = () => {
     setStarted(true);
-    localStorage.setItem("krushy_intro_v3", "true");
-    const audio = document.getElementById("intro-audio");
-    if (audio) {
-      audio.volume = 0.4;
-      audio.play().catch(() => {});
-    }
-    // Start timers
-    setTimeout(() => setActiveScene(2), 6500);
-    setTimeout(() => setActiveScene(3), 14500);
-    setTimeout(() => setActiveScene(4), 22500);
-    setTimeout(() => skip(), 30000);
+    try { sessionStorage.setItem('kj_seen', '1'); } catch(e) {}
+    
+    // Play audio
+    const audio = document.getElementById("kj-audio");
+    if (audio) { audio.volume = 0.4; audio.play().catch(()=>{}); }
+
+    // Run the vanilla JS logic
+    const TOTAL = 27000, TIMES = [0, 5600, 13200, 18800, 23200];
+    const IDS = ['s1', 's2', 's3', 's4', 's5'];
+    let touts = [], rafId = null, done = false, counterRafId = null;
+    
+    const $ = id => document.getElementById(id);
+    const activate = (i) => { IDS.forEach((id, j) => { const el = $(id); if(el) j===i ? el.classList.add('on') : el.classList.remove('on'); }); };
+    const flash = (i, ms) => {
+      const bo = $('bo'); if(!bo) return;
+      bo.style.transition = `opacity ${ms/1000}s ease`;
+      bo.style.opacity = '1';
+      touts.push(setTimeout(() => { activate(i); bo.style.transition = `opacity ${(ms*1.35)/1000}s ease`; bo.style.opacity = '0'; }, ms+20));
+    };
+    const openLB = () => { requestAnimationFrame(() => { if($('lbt')) $('lbt').style.height='5.8vmin'; if($('lbb')) $('lbb').style.height='5.8vmin'; }); };
+    const closeLB = () => { ['lbt','lbb'].forEach(id => { const el = $(id); if(el) { el.style.transition='height 1.1s cubic-bezier(.77,0,.18,1)'; el.style.height='0'; } }); };
+    
+    const counter = () => {
+      const el = $('cnt'); if(!el) return;
+      if(counterRafId !== null) cancelAnimationFrame(counterRafId);
+      const DUR = 2700, TARGET = 16000, start = performance.now();
+      const tick = (now) => {
+        const p = Math.min((now - start)/DUR, 1);
+        const eased = 1 - Math.pow(1-p, 2.2);
+        const v = Math.round(eased * TARGET);
+        el.textContent = p >= 1 ? '16,000' : (v >= 1000 ? (Math.floor(v/100)*100).toLocaleString('en-US') : String(v));
+        if(p < 1) counterRafId = requestAnimationFrame(tick); else counterRafId = null;
+      };
+      counterRafId = requestAnimationFrame(tick);
+    };
+
+    const end = () => {
+      if(done) return; done = true;
+      touts.forEach(clearTimeout); touts = [];
+      if(rafId !== null) cancelAnimationFrame(rafId);
+      if(counterRafId !== null) cancelAnimationFrame(counterRafId);
+      document.body.classList.remove('kj-lock');
+      const el = $('kj');
+      if(el) {
+        el.classList.add('out'); el.setAttribute('aria-hidden', 'true');
+        touts.push(setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 1800));
+      }
+    };
+
+    window.KJ = { skip: () => { if(done) return; touts.forEach(clearTimeout); touts=[]; activate(4); counter(); touts.push(setTimeout(() => { const cnt = $('cnt'); if(cnt) cnt.textContent='16,000'; }, 2750)); touts.push(setTimeout(end, 3200)); } };
+    
+    const cta = $('cta');
+    if(cta) cta.addEventListener('click', function(e) { e.preventDefault(); const dest = this.href; end(); setTimeout(() => { window.location.href = dest; }, 1500); });
+
+    const progress = () => {
+      const t0 = performance.now(); const fill = $('pf');
+      const tick = (now) => {
+        if(done) return;
+        const p = Math.min(((now-t0)/TOTAL)*100, 100);
+        if(fill) fill.style.width = p + '%';
+        if(p < 100) rafId = requestAnimationFrame(tick);
+      };
+      rafId = requestAnimationFrame(tick);
+    };
+
+    document.body.classList.add('kj-lock');
+    openLB(); activate(0);
+    for(let i=1; i<TIMES.length; i++) { touts.push(setTimeout(() => flash(i, 330), TIMES[i])); }
+    touts.push(setTimeout(counter, TIMES[3]+620));
+    touts.push(setTimeout(closeLB, 25000));
+    touts.push(setTimeout(end, TOTAL+400));
+    progress();
   };
 
   if (!visible) return null;
 
   if (!started) {
     return (
-      <div id="intro-overlay" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
+      <div id="kj" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
         <button onClick={startIntro} style={{ background: 'none', border: '1px solid #fff', color: '#fff', padding: '15px 30px', fontSize: '14px', letterSpacing: '4px', cursor: 'pointer', textTransform: 'uppercase' }}>
           TAP TO ENTER
         </button>
@@ -53,64 +100,57 @@ export default function Intro() {
     );
   }
 
-  const getImg = (name) => "/images/images/" + name;
-
   return (
-    <div id="intro-overlay" className={exiting ? "exiting" : ""}>
-      <audio id="intro-audio" src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1bab.mp3" loop />
-      <div id="grain"></div>
-      <div id="vignette"></div>
-      <div className="lb" id="lb-t" style={{ height: "5.8vmin" }}></div>
-      <div className="lb" id="lb-b" style={{ height: "5.8vmin" }}></div>
-      <div id="bo"></div>
+    <div id="kj" aria-hidden="false" aria-label="KrushyJersey introduction">
+      <audio id="kj-audio" src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1bab.mp3" loop />
+      <div id="gr" aria-hidden="true"></div>
+      <div id="vg" aria-hidden="true"></div>
+      <div className="lb" id="lbt" aria-hidden="true"></div>
+      <div className="lb" id="lbb" aria-hidden="true"></div>
+      <div id="bo" aria-hidden="true"></div>
+      <button id="sk" type="button" aria-label="Skip intro" onClick={() => window.KJ && window.KJ.skip()}>Skip</button>
+      <div id="pg" aria-hidden="true"><div id="pf"></div></div>
 
-      <button id="skip" onClick={skip}>Skip</button>
-      <div id="prog"><div id="prog-fill" id="intro-prog"></div></div>
-
-      <div className={`scene ${activeScene === 1 ? "active" : ""}`} id="s1">
+      <section className="sc" id="s1" aria-label="KrushyJersey brand introduction">
         <div className="logo">
           <span className="ll"><span className="lk">KRUSHY</span></span>
           <span className="ll"><span className="lj">JERSEY</span></span>
-          <div className="ld"></div>
-          <div className="lt">Your game.&nbsp; Your style.</div>
-          <div className="ls">Football jerseys &mdash; simple prices</div>
+          <div className="ld" aria-hidden="true"></div>
+          <div className="lt">Your game. Your style.</div>
+          <div className="ls">Football jerseys — simple prices</div>
         </div>
-        <div className="speaker-box">
-          <div className="speaker-name">KRUSHY</div>
-          <div className="speaker-dialogue">
-            <em>“Yo.”</em> Krushy here. Look — I’m not gonna give you some corporate speech. You know what this is. <em>Football jerseys.</em> Real ones. The kind that feel like they’ve got a story stitched into the fabric. From <em>retro classics</em> to the latest drops — I got you. Simple prices. No nonsense. Just pure, unadulterated football culture. <em>Let’s get it.</em>
-          </div>
-        </div>
-      </div>
+      </section>
 
-      <div className={`scene ${activeScene === 2 ? "active" : ""}`} id="s2">
+      <section className="sc" id="s2" aria-label="Jersey collection">
         <div className="sh">Every Club. Every League.</div>
-        <div className="jr">
-          <div className="jc"><div className="ji"><div className="jw"><img src={getImg("0361a4b1ed71e9d2.jpg")} alt="Arsenal" /></div></div><span className="jl">Premier League</span></div>
-          <div className="jc"><div className="ji"><div className="jw"><img src={getImg("1bcf3b083bf349bf.jpg")} alt="Barcelona" /></div></div><span className="jl">La Liga</span></div>
-          <div className="jc"><div className="ji"><div className="jw"><img src={getImg("9cc9aa286ecf4656.jpg")} alt="Real Madrid" /></div></div><span className="jl">La Liga</span></div>
+        <div className="jrow">
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/2d9abf71ee7846de.jpg" alt="Spain" /></div></div><div className="jl">Spain</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/1bcf3b083bf349bf.jpg" alt="Barcelona" /></div></div><div className="jl">Barcelona</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/9cc9aa286ecf4656.jpg" alt="France" /></div></div><div className="jl">France</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/0361a4b1ed71e9d2.jpg" alt="Real Madrid" /></div></div><div className="jl">Real Madrid</div></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/images/65deb957511fadd7.jpg" alt="Man City" /></div></div><div className="jl">Man City</div></div>
         </div>
-        <div className="ls2">
-          <span className="li">Premier League</span><span className="ld2"></span>
-          <span className="li">La Liga</span><span className="ld2"></span>
-          <span className="li">Serie A</span><span className="ld2"></span>
-          <span className="li">Bundesliga</span><span className="ld2"></span>
-          <span className="li">World Cup 2026</span>
-        </div>
-      </div>
+      </section>
 
-      <div className={`scene ${activeScene === 3 ? "active" : ""}`} id="s3">
-        <div className="ey">More than one team</div>
-        <div className="sn">16,000+</div>
-        <div className="sl">Jerseys across every club, league &amp; era</div>
-      </div>
+      <section className="sc" id="s3" aria-label="Spotlight">
+        <div className="s3ey">Icon Edition</div>
+        <div className="hero"><img src="/images/images/1bcf3b083bf349bf.jpg" alt="Ronaldinho 10" /></div>
+        <div className="s3name">Ronaldinho 10</div>
+        <div className="s3sub">Barcelona · Retro Classic</div>
+      </section>
 
-      <div className={`scene ${activeScene === 4 ? "active" : ""}`} id="s4">
+      <section className="sc" id="s4" aria-label="Jersey selection">
+        <div className="s4ey">More than one team</div>
+        <div className="big"><span id="cnt">0</span><span className="plus">+</span></div>
+        <div className="bigsub">Jerseys — every club, league &amp; era</div>
+      </section>
+
+      <section className="sc" id="s5" aria-label="Shop">
         <div className="fn">KrushyJersey</div>
-        <div className="ft">Football Jerseys &middot; Simple Prices</div>
-        <div className="fd"></div>
-        <button className="cta-btn" onClick={handleCta}>Shop Now</button>
-      </div>
+        <div className="ft">Football Jerseys · Simple Prices</div>
+        <div className="fd" aria-hidden="true"></div>
+        <a href="/shop" className="cta" id="cta">Shop Now</a>
+      </section>
     </div>
   );
 }

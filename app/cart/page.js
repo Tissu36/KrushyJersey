@@ -27,14 +27,14 @@ export default function Cart() {
               <div key={i} className="cartItem">
                 <img src={"/images/images/" + item.image.replace(/^images\//, "")} alt={item.name} />
                 <div><strong>{item.name}</strong><p>Size {item.size} {item.customName ? "· " + item.customName : ""} {item.patch !== "none" ? "· " + item.patch : ""}</p></div>
-                <div className="price">\${((item.lineTotal || item.price) * item.qty).toFixed(2)}</div>
+                <div className="price">${((item.lineTotal || item.price) * item.qty).toFixed(2)}</div>
               </div>
             ))}
           </div>
           <div className="cartSummary">
-            <p>Subtotal: \${subtotal.toFixed(2)}</p>
-            <p>Shipping: \${shipping.toFixed(2)}</p>
-            <p className="total">Total: \${total.toFixed(2)} USD</p>
+            <p>Subtotal: ${subtotal.toFixed(2)}</p>
+            <p>Shipping: ${shipping.toFixed(2)}</p>
+            <p className="total">Total: ${total.toFixed(2)} USD</p>
             <button className="buy" onClick={() => alert("Checkout coming soon (Moneris)")}>CHECKOUT</button>
           </div>
         </>
