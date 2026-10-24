@@ -17,7 +17,7 @@ export default function ProductCard({ product }) {
       <div className="productInfo">
         <p className="eyebrow">{product.category}</p>
         <h3>{product.name}</h3>
-        <div className="price">\${product.price.toFixed(2)} USD</div>
+        <div className="price">${product.price.toFixed(2)} USD</div>
       </div>
     </Link>
   );
