@@ -1,94 +1,180 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Intro() {
-  const [started, setStarted] = useState(false);
-  const [visible, setVisible] = useState(false);
-
   useEffect(() => {
-    if (sessionStorage.getItem('kj_seen')) return;
-    setVisible(true);
-  }, []);
+    // If they already saw it, skip it instantly
+    if (sessionStorage.getItem('kj_seen')) {
+      const kj = document.getElementById('kj');
+      if (kj) kj.classList.add('gone');
+      return;
+    }
 
-  const startIntro = () => {
-    setStarted(true);
-    sessionStorage.setItem('kj_seen', '1');
-    const audio = document.getElementById("kj-audio");
-    if (audio) { audio.volume = 0.3; audio.play().catch(()=>{}); }
+    let scenes = ['s1', 's2', 's3', 's4', 's5'];
+    let durations = [5000, 6000, 5000, 6000, 4000];
+    let current = -1;
+    let timers = [];
+    let soundOn = false;
+    let counterDone = false;
+    let audioCtx = null;
+    let hum = null;
 
-    const TOTAL = 20000, TIMES = [0, 5000, 10000, 15000];
-    const IDS = ['s1', 's2', 's3', 's4'];
-    let touts = [], done = false;
-    
-    const $ = id => document.getElementById(id);
-    const activate = (i) => { IDS.forEach((id, j) => { const el = $(id); if(el) j===i ? el.classList.add('on') : el.classList.remove('on'); }); };
-    const end = () => {
-      if(done) return; done = true;
-      touts.forEach(clearTimeout); touts = [];
-      const el = $('kj');
-      if(el) { el.classList.add('out'); setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 1500); }
+    function clearTimers() { timers.forEach(t => clearTimeout(t)); timers = []; }
+    function setProgress(pct) {
+      const pf = document.getElementById('pf');
+      const pg = document.getElementById('pg');
+      if(pf) pf.style.width = pct + '%';
+      if(pg) pg.setAttribute('aria-valuenow', Math.round(pct));
+    }
+    function activate(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('on'); el.setAttribute('aria-hidden', 'false'); }
+    }
+    function deactivate(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('on'); el.setAttribute('aria-hidden', 'true'); }
+    }
+    function animateCounter() {
+      if (counterDone) return;
+      counterDone = true;
+      const el = document.getElementById('cnt');
+      const target = 16000;
+      const duration = 2000;
+      const start = performance.now();
+      function step(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        if(el) el.textContent = Math.round(eased * target).toLocaleString();
+        if (t < 1) requestAnimationFrame(step);
+        else if(el) el.textContent = target.toLocaleString();
+      }
+      requestAnimationFrame(step);
+    }
+    function showNext() {
+      if (current >= 0) deactivate(scenes[current]);
+      current++;
+      if (current >= scenes.length) {
+        setProgress(100);
+        window.KJ.skip();
+        return;
+      }
+      activate(scenes[current]);
+      if (scenes[current] === 's4') timers.push(setTimeout(animateCounter, 400));
+      
+      const total = durations.reduce((a, b) => a + b, 0);
+      const elapsed = durations.slice(0, current + 1).reduce((a, b) => a + b, 0);
+      setProgress((elapsed / total) * 100);
+      
+      if (current < scenes.length - 1) {
+        timers.push(setTimeout(showNext, durations[current]));
+      } else {
+        timers.push(setTimeout(() => { setProgress(100); window.KJ.skip(); }, durations[current]));
+      }
+    }
+    function startAudio() {
+      if (audioCtx) return;
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine'; osc.frequency.value = 55;
+        gain.gain.value = 0.0001;
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.03, audioCtx.currentTime + 1.5);
+        hum = { osc, gain };
+      } catch (e) {}
+    }
+    function stopAudio() {
+      if (!hum || !audioCtx) return;
+      try {
+        hum.gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
+        hum.osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {}
+      hum = null;
+    }
+
+    window.KJ = {
+      skip: function () {
+        clearTimers();
+        const kj = document.getElementById('kj');
+        if (kj) { kj.classList.add('out'); kj.setAttribute('aria-hidden', 'true'); }
+        stopAudio();
+        sessionStorage.setItem('kj_seen', '1');
+        setTimeout(() => { if (kj) kj.classList.add('gone'); }, 1800);
+      },
+      toggleSound: function () {
+        soundOn = !soundOn;
+        const btn = document.getElementById('snd');
+        if (btn) soundOn ? btn.classList.add('on') : btn.classList.remove('on');
+        if (soundOn) startAudio(); else stopAudio();
+      }
     };
 
-    window.KJ = { skip: () => { if(done) return; touts.forEach(clearTimeout); activate(3); touts.push(setTimeout(end, 2000)); } };
-    const cta = $('cta');
-    if(cta) cta.addEventListener('click', function(e) { e.preventDefault(); const dest = this.href; end(); setTimeout(() => { window.location.href = dest; }, 1500); });
+    const kj = document.getElementById('kj');
+    if(kj) kj.classList.add('on');
+    setTimeout(showNext, 300);
 
-    activate(0);
-    touts.push(setTimeout(() => activate(1), TIMES[1]));
-    touts.push(setTimeout(() => activate(2), TIMES[2]));
-    touts.push(setTimeout(() => activate(3), TIMES[3]));
-    touts.push(setTimeout(end, TOTAL));
-  };
-
-  if (!visible) return null;
-  if (!started) return (
-    <div id="kj" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, position: 'fixed', inset: 0, background: '#060606' }}>
-      <button onClick={startIntro} style={{ background: 'none', border: '1px solid #fff', color: '#fff', padding: '15px 30px', fontSize: '14px', letterSpacing: '4px', cursor: 'pointer', textTransform: 'uppercase' }}>TAP TO ENTER</button>
-    </div>
-  );
-
-  // The "mixBlendMode: multiply" removes the white background of the images to blend into the black screen!
-  const imgStyle = { width: '80px', height: '100px', objectFit: 'contain', mixBlendMode: 'screen' };
+    return () => clearTimers();
+  }, []);
 
   return (
-    <div id="kj" aria-hidden="false" style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#060606', color: '#fff', overflow: 'hidden', fontFamily: 'Inter, sans-serif' }}>
-      <audio id="kj-audio" src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1bab.mp3" loop />
-      
-      {/* We removed the grain to fix the lag */}
-      <div id="vg" style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle, transparent 30%, #000 100%)', zIndex: 1 }}></div>
-      
-      <button id="sk" onClick={() => window.KJ && window.KJ.skip()} style={{ position: 'absolute', top: 20, right: 20, zIndex: 50, background: 'none', border: '1px solid #333', color: '#888', padding: '8px 16px', fontSize: '10px', letterSpacing: '2px', cursor: 'pointer' }}>SKIP</button>
-      
-      <style>{`.scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s ease; padding: 20px; text-align: center; } .scene.on { opacity: 1 !important; }`}</style>
+    <div id="kj" className="kj-intro">
+      <div id="gr"></div><div id="vg"></div>
+      <div className="lb" id="lbt"></div><div className="lb" id="lbb"></div>
+      <div id="bo"></div>
+      <button id="snd" aria-label="Toggle sound" onClick={() => window.KJ.toggleSound()}>♪ Sound</button>
+      <button id="sk" aria-label="Skip intro" onClick={() => window.KJ.skip()}>Skip</button>
+      <div id="pg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="pf"></div></div>
 
-      <div className="scene" id="s1">
-        <h1 style={{ fontSize: '40px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0 }}>KRUSHY</h1>
-        <h1 style={{ fontSize: '40px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0, color: '#888' }}>JERSEY</h1>
-        <div style={{ marginTop: '20px', maxWidth: '600px', background: 'rgba(255,255,255,0.05)', border: '1px solid #333', padding: '20px', textAlign: 'left', borderRadius: '4px' }}>
-          <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0, fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '2px' }}>KRUSHY</p>
-          <p style={{ marginTop: '10px', fontSize: '13px', lineHeight: 1.6, color: '#ccc' }}><em>“Yo.”</em> Krushy here. Look — I’m not gonna give you some corporate speech. You know what this is. <em>Football jerseys.</em> Real ones. The kind that feel like they’ve got a story stitched into the fabric. From <em>retro classics</em> to the latest drops — I got you. Simple prices. No nonsense. Just pure, unadulterated football culture. <em>Let’s get it.</em></p>
+      <div className="sc" id="s1">
+        <div className="logo">
+          <span className="ll"><span className="lk">KRUSHY</span></span>
+          <span className="ll"><span className="lj">JERSEY</span></span>
+          <div className="ld"></div>
+          <div className="lt">Your game.&nbsp; Your style.</div>
+          <div className="ls">Football jerseys &mdash; simple prices</div>
         </div>
       </div>
 
-      <div className="scene" id="s2">
-        <h2 style={{ fontSize: '28px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '3px' }}>EVERY CLUB. EVERY LEAGUE.</h2>
-        <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'center' }}>
-          <img src="/images/0361a4b1ed71e9d2.jpg" alt="Arsenal" style={imgStyle} />
-          <img src="/images/1bcf3b083bf349bf.jpg" alt="Barcelona" style={imgStyle} />
-          <img src="/images/9cc9aa286ecf4656.jpg" alt="RMA" style={imgStyle} />
+      <div className="sc" id="s2">
+        <div className="sh">Every Club. Every League.</div>
+        <div className="jrow">
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/spain.png" alt="Spain" /></div></div><span className="jl">Spain</span></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/barcelona.png" alt="Barcelona" /></div></div><span className="jl">Barcelona</span></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/france.png" alt="France" /></div></div><span className="jl">France</span></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/realmadrid.png" alt="Real Madrid" /></div></div><span className="jl">Real Madrid</span></div>
+          <div className="jc"><div className="ji"><div className="jw"><img src="/images/mancity.png" alt="Man City" /></div></div><span className="jl">Man City</span></div>
+        </div>
+        <div className="lstrip">
+          <span className="li">Premier League</span><span className="ldot"></span>
+          <span className="li">La Liga</span><span className="ldot"></span>
+          <span className="li">National Teams</span><span className="ldot"></span>
+          <span className="li">Retro</span><span className="ldot"></span>
+          <span className="li">World Cup 2026</span>
         </div>
       </div>
 
-      <div className="scene" id="s3">
-        <p style={{ letterSpacing: '5px', fontSize: '10px', color: '#888' }}>MORE THAN ONE TEAM</p>
-        <h1 style={{ fontSize: '80px', fontFamily: 'Bebas Neue, sans-serif', margin: 0 }}>16,000+</h1>
-        <p style={{ letterSpacing: '3px', fontSize: '12px', color: '#888' }}>JERSEYS ACROSS EVERY CLUB</p>
+      <div className="sc" id="s3">
+        <div className="ey">Icon Edition</div>
+        <div className="hero"><img src="/images/barcelona.png" alt="Ronaldinho 10" /></div>
+        <div className="s3name">Ronaldinho 10</div>
+        <div className="s3sub">Barcelona &nbsp;&middot;&nbsp; Retro Classic</div>
       </div>
 
-      <div className="scene" id="s4">
-        <h1 style={{ fontSize: '35px', fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '5px', margin: 0 }}>KRUSHYJERSEY</h1>
-        <p style={{ letterSpacing: '3px', fontSize: '12px', color: '#888', marginTop: '10px' }}>SIMPLE PRICES</p>
-        <a href="/shop" id="cta" style={{ marginTop: '30px', padding: '15px 40px', border: '1px solid #fff', color: '#fff', textDecoration: 'none', letterSpacing: '3px', fontSize: '12px', textTransform: 'uppercase' }}>Shop Now</a>
+      <div className="sc" id="s4">
+        <div className="ey4">More than one team</div>
+        <div className="big"><span id="cnt">0</span>+</div>
+        <div className="bigsub">Jerseys &mdash; every club, league &amp; era</div>
+      </div>
+
+      <div className="sc" id="s5">
+        <div className="fn">KRUSHY</div>
+        <div className="ft">The home of the beautiful game.</div>
+        <div className="fd"></div>
+        <button className="cta" onClick={() => window.KJ.skip()}>Enter Store &rarr;</button>
       </div>
     </div>
   );
