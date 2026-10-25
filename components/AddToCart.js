@@ -7,11 +7,8 @@ const SIZES = [
   { code: "3XL", label: "3XL", up: 2 }, { code: "4XL", label: "4XL", up: 2 },
 ];
 
-const PATCHES = [
-  { key: "none", label: "No Badge", price: 0 },
-  { key: "league", label: "League Patch", price: 3, img: "/badges/la-liga.svg" },
-  { key: "ucl", label: "Champions League", price: 5, img: "/badges/ucl.svg" },
-];
+// List of teams that are actually in the UCL this year (you can add more)
+const UCL_TEAMS = ["rma", "bar", "atm", "ars", "mci", "bay", "bvb", "psg", "int", "acm", "juv"];
 
 export default function AddToCart({ product }) {
   const [size, setSize] = useState("M");
@@ -20,9 +17,24 @@ export default function AddToCart({ product }) {
   const [patch, setPatch] = useState("none");
 
   const canCustomize = !!product.customizable;
+  
+  // Check if this team is in the UCL list
+  const isUCLTeam = UCL_TEAMS.some(team => (product.categories || []).includes(team));
+
+  // Build the available patches dynamically
+  const availablePatches = [
+    { key: "none", label: "No Badge", price: 0 },
+    { key: "league", label: "League Patch", price: 3, img: "/badges/la-liga.png" },
+  ];
+  
+  // Only add UCL if the team qualifies
+  if (isUCLTeam) {
+    availablePatches.push({ key: "ucl", label: "Champions League", price: 5, img: "/badges/ucl.png" });
+  }
+
   const sizeUp = SIZES.find(s => s.code === size)?.up || 0;
   const nameAndNum = !canCustomize ? 0 : (name && number ? 10 : name ? 6 : number ? 6 : 0);
-  const patchCost = !canCustomize ? 0 : (PATCHES.find(p => p.key === patch)?.price || 0);
+  const patchCost = !canCustomize ? 0 : (availablePatches.find(p => p.key === patch)?.price || 0);
   const total = product.price + nameAndNum + patchCost + sizeUp;
 
   const add = () => {
@@ -49,10 +61,10 @@ export default function AddToCart({ product }) {
         <>
           <div className="pdpRow">
             <label className="pdpLabel">BADGE (CHOOSE ONE)</label>
-            <div className="patchGrid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-              {PATCHES.map(p => (
+            <div className="patchGrid" style={{ gridTemplateColumns: availablePatches.length === 3 ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)' }}>
+              {availablePatches.map(p => (
                 <button key={p.key} type="button" className={"patchCard" + (patch === p.key ? " active" : "")} onClick={() => setPatch(p.key)}>
-                  <div className="patchIconWrap">{p.img ? <img src={p.img} className="patchImg" /> : <div className="patchEmpty" />}</div>
+                  <div className="patchIconWrap">{p.img ? <img src={p.img} className="patchImg" style={{ objectFit: 'contain' }} /> : <div className="patchEmpty" />}</div>
                   <div className="patchMeta"><span className="patchTitle">{p.label}</span><span className="patchCost">{p.price === 0 ? "FREE" : "+$" + p.price}</span></div>
                 </button>
               ))}
