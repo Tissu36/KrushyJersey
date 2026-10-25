@@ -25,13 +25,12 @@ export default async function CategoryPage({ params, searchParams }) {
   if (all.length === 0) return <main className="section"><h1>Category not found</h1></main>;
   const name = CATEGORY_NAMES[slug] || slug.replace(/-/g, " ").toUpperCase();
 
-  // Find ALL clubs that are inside this league
   const availableClubs = new Set();
   all.forEach(p => {
     if (p.categories) {
       p.categories.forEach(c => {
-        // Add any category that isn't the league itself or a product type
-        if (c !== slug && !TYPE_FILTERS.some(t => t.match === c) && !["casual-clothing", "retro-jerseys", "jackets", "kits"].includes(c)) {
+        // Ignore the league name itself, and ignore the generic type filters
+        if (c !== slug && !TYPE_FILTERS.some(t => t.match === c) && !["casual-clothing", "retro-jerseys", "jackets", "kits", "other"].includes(c)) {
           availableClubs.add(c);
         }
       });
