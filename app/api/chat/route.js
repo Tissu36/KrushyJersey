@@ -16,7 +16,7 @@ export async function POST(req) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192", // The classic, reliable Groq model
+        model: "openai/gpt-oss-20b", // New free model
         messages: [
           { role: "system", content: "You are Krushy, the support bot for KrushyJersey. We sell football jerseys. Shipping takes 7-14 days. Customized jerseys cannot be returned. Answer concisely and coolly." },
           ...messages
