@@ -1,5 +1,6 @@
 import "./globals.css";
 import Link from "next/link";
+import ChatWidget from "../components/ChatWidget";
 import Intro from "../components/Intro";
 
 export const metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Intro />
+        <ChatWidget />
         <header className="siteHeader">
           <Link className="logo" href="/">KRUSHY<span>JERSEY</span></Link>
           <nav>
