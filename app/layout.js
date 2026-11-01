@@ -39,8 +39,15 @@ export default function RootLayout({ children }) {
         {children}
         <footer>
           <div className="footerLogo">KRUSHYJERSEY</div>
-          <p>Clean jerseys. Simple prices.</p>
-          <p className="muted">Product availability, supplier stock and shipping times are confirmed before fulfillment.</p>
+          <p style={{marginBottom: "20px"}}>Clean jerseys. Simple prices.</p>
+          <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", marginBottom: "20px", fontSize: "12px" }}>
+            <a href="/privacy" style={{ color: "var(--muted)" }}>Privacy Policy</a>
+            <a href="/terms" style={{ color: "var(--muted)" }}>Terms of Service</a>
+            <a href="/refund" style={{ color: "var(--muted)" }}>Refund Policy</a>
+            <a href="/cookies" style={{ color: "var(--muted)" }}>Cookie Policy</a>
+            <a href="/data-deletion" style={{ color: "var(--muted)" }}>Data Deletion</a>
+          </div>
+          <p className="muted">KrushyJersey operates as an independent reseller. All jerseys are sourced from third-party suppliers. Shipping takes 7-14 days. Business contact: support@krushyjersey.com</p>
         </footer>
       </body>
     </html>
