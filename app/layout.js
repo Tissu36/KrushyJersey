@@ -1,6 +1,8 @@
 import "./globals.css";
 import Link from "next/link";
 import Intro from "../components/Intro";
+import ChatWidget from "../components/ChatWidget";
+import CookieBanner from "../components/CookieBanner";
 
 export const metadata = {
   title: "KrushyJersey — Football Jerseys",
@@ -19,8 +21,6 @@ const NAV = [
   { slug: "mlb", name: "MLB" },
   { slug: "nhl", name: "NHL" },
   { slug: "casual-clothing", name: "Casual" },
-  { slug: "efl-championship-and-other", name: "EFL" },
-  { slug: "mls", name: "MLS" },
 ];
 
 export default function RootLayout({ children }) {
@@ -28,6 +28,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Intro />
+        <ChatWidget />
+        <CookieBanner />
         <header className="siteHeader">
           <Link className="logo" href="/">KRUSHY<span>JERSEY</span></Link>
           <nav>

@@ -14,8 +14,6 @@ const HERO_CATS = [
   { slug: "mlb", name: "MLB" },
   { slug: "nhl", name: "NHL" },
   { slug: "casual-clothing", name: "Casual" },
-  { slug: "efl-championship-and-other", name: "EFL Championship" },
-  { slug: "mls", name: "MLS" },
 ];
 
 export default function Home() {
@@ -24,8 +22,11 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <h1>Football Jerseys.<br/><em>Simple Prices.</em></h1>
-        <p>16,000+ jerseys across every club, league and era.</p>
+        <h1 style={{ fontSize: 'clamp(48px, 8vw, 96px)' }}>Football Jerseys.<br/><em>Simple Prices.</em></h1>
+        <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', maxWidth: '800px', margin: '0 auto 40px auto' }}>
+          Over 16,000 authentic jerseys across every club, league, and era. 
+          From retro classics to the latest 2026 drops. Fast worldwide shipping. No hidden fees.
+        </p>
         <Link className="cta" href="#clubs" prefetch={false}>SHOP NOW</Link>
       </section>
       <section className="section" id="clubs">
@@ -48,4 +49,3 @@ export default function Home() {
     </main>
   );
 }
-// force rebuild
