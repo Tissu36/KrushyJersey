@@ -2,49 +2,77 @@ import Link from "next/link";
 import { getProducts } from "../lib/products";
 import ProductCard from "../components/ProductCard";
 
-const HERO_CATS = [
-  { slug: "premier-league", name: "Premier League" },
-  { slug: "la-liga", name: "La Liga" },
-  { slug: "serie-a", name: "Serie A" },
-  { slug: "bundesliga", name: "Bundesliga" },
-  { slug: "national-team", name: "World Cup 2026" },
-  { slug: "retro-jerseys", name: "Retro" },
-  { slug: "nba", name: "NBA" },
-  { slug: "nfl", name: "NFL" },
-  { slug: "mlb", name: "MLB" },
-  { slug: "nhl", name: "NHL" },
-  { slug: "casual-clothing", name: "Casual" },
-];
-
 export default function Home() {
   const products = getProducts();
-  const featured = products.slice(0, 12);
+  const featured = products.slice(0, 4);
+  const newArrivals = products.slice(10, 14);
+  const bestSellers = products.slice(50, 54);
+
   return (
     <main>
+      {/* Cinematic Hero */}
       <section className="hero">
-        <h1 style={{ fontSize: 'clamp(48px, 8vw, 96px)' }}>Football Jerseys.<br/><em>Simple Prices.</em></h1>
-        <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', maxWidth: '800px', margin: '0 auto 40px auto' }}>
-          Over 16,000 authentic jerseys across every club, league, and era. 
-          From retro classics to the latest 2026 drops. Fast worldwide shipping. No hidden fees.
-        </p>
-        <Link className="cta" href="#clubs" prefetch={false}>SHOP NOW</Link>
+        <div className="hero-content">
+          <p className="hero-kicker">PREMIUM SPORTSWEAR</p>
+          <h1>REP YOUR CLUB.<br/><em>IN STYLE.</em></h1>
+          <p className="hero-sub">MORE THAN JUST A JERSEY. 16,000+ authentic kits across every league.</p>
+          <Link className="cta" href="/shop">SHOP NOW</Link>
+        </div>
       </section>
-      <section className="section" id="clubs">
-        <h2>Shop by Category</h2>
+
+      {/* Categories */}
+      <section className="section">
+        <h2>SHOP BY SPORT</h2>
         <div className="clubGrid">
-          {HERO_CATS.map(c => (
-            <Link key={c.slug} className="clubCard" href={`/category/${c.slug}`} prefetch={false}>
-              <span>{c.name}</span>
+          {["Premier League", "La Liga", "NBA", "NFL", "MLB", "Retro"].map(c => (
+            <Link key={c} className="clubCard" href={`/shop?q=${c}`}>
+              <span>{c}</span>
             </Link>
           ))}
         </div>
       </section>
+
+      {/* Featured */}
       <section className="section">
         <div className="sectionHeader">
-          <h2>Featured Jerseys</h2>
-          <Link href="/shop" prefetch={false}>See all →</Link>
+          <h2>FEATURED</h2>
+          <Link href="/shop">See all →</Link>
         </div>
         <div className="productGrid">{featured.map(p => <ProductCard key={p.slug} product={p} />)}</div>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="section">
+        <div className="sectionHeader">
+          <h2>NEW ARRIVALS</h2>
+          <Link href="/shop">See all →</Link>
+        </div>
+        <div className="productGrid">{newArrivals.map(p => <ProductCard key={p.slug} product={p} />)}</div>
+      </section>
+
+      {/* Best Sellers */}
+      <section className="section">
+        <div className="sectionHeader">
+          <h2>BEST SELLERS</h2>
+          <Link href="/shop">See all →</Link>
+        </div>
+        <div className="productGrid">{bestSellers.map(p => <ProductCard key={p.slug} product={p} />)}</div>
+      </section>
+
+      {/* Benefits */}
+      <section className="section benefits">
+        <div className="benefit">
+          <h3>FAST SHIPPING</h3>
+          <p>Worldwide delivery in 7-14 days.</p>
+        </div>
+        <div className="benefit">
+          <h3>SECURE PAYMENT</h3>
+          <p>Encrypted checkout with Stripe/Moneris.</p>
+        </div>
+        <div className="benefit">
+          <h3>QUALITY GUARANTEE</h3>
+          <p>Premium stitching and fabric.</p>
+        </div>
       </section>
     </main>
   );

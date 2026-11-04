@@ -1,25 +1,27 @@
 import "./globals.css";
 import Link from "next/link";
-import Intro from "../components/Intro";
-import ChatWidget from "../components/ChatWidget";
-import CookieBanner from "../components/CookieBanner";
+import { Search, User, ShoppingCart } from "lucide-react"; // We will add lucide-react next
 
 export const metadata = {
-  title: "KrushyJersey — Football Jerseys",
-  description: "Clean football jerseys, simple prices.",
+  title: "KRUSHYJERSEY — MORE THAN JUST A JERSEY",
+  description: "Premium football and sports jerseys. Rep your club in style.",
 };
 
 const NAV = [
   { slug: "premier-league", name: "Premier League" },
   { slug: "la-liga", name: "La Liga" },
-  { slug: "serie-a", name: "Serie A" },
   { slug: "bundesliga", name: "Bundesliga" },
-  { slug: "national-team", name: "World Cup 2026" },
-  { slug: "retro-jerseys", name: "Retro" },
+  { slug: "serie-a", name: "Serie A" },
+  { slug: "ligue-1-mcdonalds", name: "Ligue 1" },
+  { slug: "mls", name: "MLS" },
+  { slug: "national-team", name: "National Teams" },
+  { slug: "retro-jerseys", name: "Retro Jerseys" },
   { slug: "nba", name: "NBA" },
   { slug: "nfl", name: "NFL" },
   { slug: "mlb", name: "MLB" },
   { slug: "nhl", name: "NHL" },
+  { slug: "f1", name: "F1" },
+  { slug: "rugby", name: "Rugby" },
   { slug: "casual-clothing", name: "Casual" },
 ];
 
@@ -27,29 +29,48 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Intro />
-        <ChatWidget />
-        <CookieBanner />
+        {/* Announcement Bar */}
+        <div className="announcement-bar">
+          FREE SHIPPING ON ORDERS OVER $150 CAD • SHOP NOW
+        </div>
+
         <header className="siteHeader">
           <Link className="logo" href="/">KRUSHY<span>JERSEY</span></Link>
+          
           <nav>
-            <Link href="/shop" prefetch={false}>Shop All</Link>
-            {NAV.map(c => <Link key={c.slug} href={`/category/${c.slug}`} prefetch={false}>{c.name}</Link>)}
-            <Link className="cartLink" href="/cart" prefetch={false}>Cart</Link>
+            <Link href="/shop">Shop All</Link>
+            {NAV.slice(0, 5).map(c => <Link key={c.slug} href={`/category/${c.slug}`}>{c.name}</Link>)}
+            <div className="nav-dropdown">
+              <span>More</span>
+              <div className="dropdown-content">
+                {NAV.slice(5).map(c => <Link key={c.slug} href={`/category/${c.slug}`}>{c.name}</Link>)}
+              </div>
+            </div>
           </nav>
-        </header>
-        {children}
-        <footer>
-          <div className="footerLogo">KRUSHYJERSEY</div>
-          <p style={{marginBottom: "20px"}}>Clean jerseys. Simple prices.</p>
-          <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", marginBottom: "20px", fontSize: "12px" }}>
-            <a href="/privacy" style={{ color: "var(--muted)" }}>Privacy Policy</a>
-            <a href="/terms" style={{ color: "var(--muted)" }}>Terms of Service</a>
-            <a href="/refund" style={{ color: "var(--muted)" }}>Refund Policy</a>
-            <a href="/cookies" style={{ color: "var(--muted)" }}>Cookie Policy</a>
-            <a href="/data-deletion" style={{ color: "var(--muted)" }}>Data Deletion</a>
+
+          <div className="header-actions">
+            <button className="icon-btn"><Search size={18} /></button>
+            <button className="icon-btn"><User size={18} /></button>
+            <Link href="/cart" className="icon-btn cart-btn"><ShoppingCart size={18} /><span id="cart-count">0</span></Link>
           </div>
-          <p className="muted">KrushyJersey operates as an independent reseller. All jerseys are sourced from third-party suppliers. Shipping takes 7-14 days. Business contact: support@krushyjersey.com</p>
+        </header>
+
+        {children}
+        
+        <footer>
+          <div className="footer-content">
+            <div className="footer-brand">
+              <h2>KRUSHYJERSEY</h2>
+              <p>MORE THAN JUST A JERSEY.</p>
+            </div>
+            <div className="footer-links">
+              <Link href="/privacy">Privacy Policy</Link>
+              <Link href="/terms">Terms of Service</Link>
+              <Link href="/refund">Refund Policy</Link>
+              <Link href="/admin">Admin</Link>
+            </div>
+          </div>
+          <p className="copyright">© 2026 KrushyJersey. All rights reserved.</p>
         </footer>
       </body>
     </html>

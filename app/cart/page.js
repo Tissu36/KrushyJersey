@@ -4,40 +4,70 @@ import { useEffect, useState } from "react";
 
 export default function Cart() {
   const [cart, setCart] = useState([]);
-  useEffect(() => { 
-    if (window.location.search.includes("success=1")) {
-      localStorage.removeItem("krushy_cart");
-      setCart([]);
-    } else {
-      setCart(JSON.parse(localStorage.getItem("krushy_cart") || "[]")); 
-    }
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setCart(JSON.parse(localStorage.getItem("krushy_cart") || "[]"));
+    setLoaded(true);
   }, []);
-  
-  const subtotal = cart.reduce((s, i) => s + (i.lineTotal || i.price) * i.qty, 0);
-  const shipping = subtotal > 0 ? (subtotal >= 150 ? 0 : 10) : 0;
+
+  const updateQty = (id, delta) => {
+    const newCart = cart.map(item => {
+      if (item.id === id) {
+        const qty = Math.max(1, item.qty + delta);
+        return { ...item, qty, lineTotal: (item.price + item.personalization) * qty };
+      }
+      return item;
+    });
+    setCart(newCart);
+    localStorage.setItem("krushy_cart", JSON.stringify(newCart));
+  };
+
+  const removeItem = (id) => {
+    const newCart = cart.filter(item => item.id !== id);
+    setCart(newCart);
+    localStorage.setItem("krushy_cart", JSON.stringify(newCart));
+  };
+
+  if (!loaded) return <main className="section"><h1>Loading...</h1></main>;
+
+  const subtotal = cart.reduce((sum, item) => sum + item.lineTotal, 0);
+  const shipping = subtotal > 0 && subtotal < 150 ? 10 : 0;
   const total = subtotal + shipping;
 
   return (
     <main className="section">
-      <h1>Cart</h1>
-      {cart.length === 0 ? <p>Your cart is empty. <Link href="/shop">Shop now</Link></p> : (
-        <>
-          <div className="cartList">
-            {cart.map((item, i) => (
-              <div key={i} className="cartItem">
-                <img src={"/images/images/" + item.image.replace(/^images\//, "")} alt={item.name} />
-                <div><strong>{item.name}</strong><p>Size {item.size} {item.customName ? "· " + item.customName : ""} {item.patch !== "none" ? "· " + item.patch : ""}</p></div>
-                <div className="price">${((item.lineTotal || item.price) * item.qty).toFixed(2)}</div>
+      <h1>YOUR CART</h1>
+      {cart.length === 0 ? (
+        <p>Your cart is empty. <Link href="/shop" style={{color: 'var(--accent)'}}>Shop Now</Link></p>
+      ) : (
+        <div className="cartLayout">
+          <div className="cartItems">
+            {cart.map(item => (
+              <div key={item.id} className="cartItem">
+                <img src={`/images/${item.image.replace(/^images\//, "")}`} alt={item.name} />
+                <div className="cartInfo">
+                  <h3>{item.name}</h3>
+                  <p>Size: {item.size} | Name: {item.customName || "None"} | Num: {item.customNumber || "None"}</p>
+                  <p className="price">${item.lineTotal.toFixed(2)} CAD</p>
+                  <div className="cartActions">
+                    <button onClick={() => updateQty(item.id, -1)}>-</button>
+                    <span>{item.qty}</span>
+                    <button onClick={() => updateQty(item.id, 1)}>+</button>
+                    <button className="remove" onClick={() => removeItem(item.id)}>Remove</button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
           <div className="cartSummary">
-            <p>Subtotal: ${subtotal.toFixed(2)}</p>
-            <p>Shipping: ${shipping.toFixed(2)}</p>
-            <p className="total">Total: ${total.toFixed(2)} USD</p>
-            <button className="buy" onClick={() => alert("Checkout coming soon (Moneris)")}>CHECKOUT</button>
+            <h3>ORDER SUMMARY</h3>
+            <p><span>Subtotal</span><span>${subtotal.toFixed(2)} CAD</span></p>
+            <p><span>Shipping</span><span>${shipping.toFixed(2)} CAD</span></p>
+            <p className="total"><span>Total</span><span>${total.toFixed(2)} CAD</span></p>
+            <button className="buy" onClick={() => window.location.href = "/api/checkout"}>CHECKOUT SECURELY</button>
           </div>
-        </>
+        </div>
       )}
     </main>
   );
