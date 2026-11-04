@@ -9,8 +9,10 @@ export default function AddToCart({ product }) {
   const [number, setNumber] = useState("");
   const [adding, setAdding] = useState(false);
 
+  // Price logic: Base price + 10% increase + customization
+  const basePrice = (product.price * 1.10).toFixed(2); 
   const customizationCost = (name ? 6 : 0) + (number ? 6 : 0);
-  const total = product.price + customizationCost;
+  const total = (parseFloat(basePrice) + customizationCost).toFixed(2);
 
   const handleAdd = () => {
     setAdding(true);
@@ -19,13 +21,13 @@ export default function AddToCart({ product }) {
       id: Date.now(),
       slug: product.slug,
       name: product.name,
-      price: product.price,
+      price: parseFloat(basePrice),
       image: product.images[0],
       size,
       customName: name,
       customNumber: number,
       personalization: customizationCost,
-      lineTotal: total,
+      lineTotal: parseFloat(total),
       qty: 1
     });
     localStorage.setItem("krushy_cart", JSON.stringify(cart));
@@ -54,13 +56,13 @@ export default function AddToCart({ product }) {
       </div>
 
       <div className="priceBreakdown">
-        <p><span>Jersey</span><strong>${product.price.toFixed(2)}</strong></p>
+        <p><span>Jersey</span><strong>${basePrice} CAD</strong></p>
         {customizationCost > 0 && <p><span>Customization</span><strong>+$${customizationCost.toFixed(2)}</strong></p>}
-        <p className="grandTotal"><span>Total</span><strong>${total.toFixed(2)} CAD</strong></p>
+        <p className="grandTotal"><span>Total</span><strong>${total} CAD</strong></p>
       </div>
 
       <button className="buy" onClick={handleAdd} disabled={adding}>
-        {adding ? "ADDING..." : `ADD TO CART — $${total.toFixed(2)}`}
+        {adding ? "ADDING..." : `ADD TO CART — $${total}`}
       </button>
     </div>
   );

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function Cart() {
   const [cart, setCart] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [currency, setCurrency] = useState("CAD");
 
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem("krushy_cart") || "[]"));
@@ -37,7 +38,16 @@ export default function Cart() {
 
   return (
     <main className="section">
-      <h1>YOUR CART</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+        <h1>YOUR CART</h1>
+        <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={{ padding: '10px', background: 'var(--card)', color: '#fff', border: '1px solid var(--line)', borderRadius: '4px' }}>
+          <option value="CAD">CAD $</option>
+          <option value="USD">USD $</option>
+          <option value="EUR">EUR €</option>
+          <option value="GBP">GBP £</option>
+        </select>
+      </div>
+      
       {cart.length === 0 ? (
         <p>Your cart is empty. <Link href="/shop" style={{color: 'var(--accent)'}}>Shop Now</Link></p>
       ) : (

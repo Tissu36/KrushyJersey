@@ -27,7 +27,7 @@ export default async function ProductPage({ params }) {
       <div className="productDetails">
         <p className="eyebrow"><Link href={`/category/${product.categorySlug}`}>{product.category}</Link></p>
         <h1>{product.name}</h1>
-        <div className="price">${product.price.toFixed(2)} CAD</div>
+        <div className="price">${(product.price * 1.10).toFixed(2)} CAD</div>
         <p className="availability">✓ In Stock — Ships in 7-14 days</p>
         <p className="description">Premium quality football jersey. Breathable, moisture-wicking fabric. Perfect for match day or everyday wear.</p>
         <AddToCart product={product} />
