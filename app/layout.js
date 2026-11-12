@@ -1,40 +1,40 @@
 import "./globals.css";
 import Link from "next/link";
-import { Search, ShoppingCart, Zap } from "lucide-react";
 
 export const metadata = {
-  title: "KRUSHYJERSEY — MORE THAN JUST A JERSEY",
-  description: "Premium football and sports jerseys. Rep your club in style.",
+  title: "KRUSHYJERSEY — More Than Just A Jersey",
+  description: "16,000+ premium football, basketball, baseball and sports jerseys. Shop by club, league or team.",
 };
 
-const NAV = [
-  { slug: "premier-league",      name: "Premier League" },
-  { slug: "la-liga",             name: "La Liga" },
-  { slug: "bundesliga",          name: "Bundesliga" },
-  { slug: "serie-a",             name: "Serie A" },
-  { slug: "ligue-1-mcdonalds",   name: "Ligue 1" },
-  { slug: "mls",                 name: "MLS" },
-  { slug: "national-team",       name: "National Teams" },
-  { slug: "retro-jerseys",       name: "Retro Jerseys" },
-  { slug: "nba",                 name: "NBA" },
-  { slug: "nfl",                 name: "NFL" },
-  { slug: "mlb",                 name: "MLB" },
-  { slug: "nhl",                 name: "NHL" },
-  { slug: "f1",                  name: "F1" },
-  { slug: "rugby",               name: "Rugby" },
-  { slug: "casual-clothing",     name: "Casual" },
+const LEAGUES = [
+  { slug: "premier-league",       name: "Premier League" },
+  { slug: "la-liga",              name: "La Liga" },
+  { slug: "bundesliga",           name: "Bundesliga" },
+  { slug: "serie-a",              name: "Serie A" },
+  { slug: "ligue-1-mcdonalds",    name: "Ligue 1" },
+  { slug: "mls",                  name: "MLS" },
+  { slug: "national-team",        name: "National Teams" },
+  { slug: "retro-jerseys",        name: "Retro Jerseys" },
+];
+const MORE = [
+  { slug: "nba",                   name: "NBA" },
+  { slug: "nfl",                   name: "NFL" },
+  { slug: "mlb",                   name: "MLB" },
+  { slug: "nhl",                   name: "NHL" },
+  { slug: "efl-championship-and-other", name: "EFL Championship" },
+  { slug: "casual-clothing",       name: "Casual Clothing" },
 ];
 
-const MARQUEE_TEXT = [
-  "FREE SHIPPING ON ORDERS OVER $150 CAD",
-  "16,000+ AUTHENTIC JERSEYS",
-  "FAST WORLDWIDE DELIVERY",
-  "PREMIUM QUALITY GUARANTEED",
-  "NEW DROPS EVERY WEEK",
+const MSGS = [
+  "⚡ FREE SHIPPING ON ORDERS OVER $150 CAD",
+  "🌍 WORLDWIDE DELIVERY — 7 TO 14 DAYS",
+  "⭐ 16,000+ PREMIUM JERSEYS IN STOCK",
+  "🔒 SECURE CHECKOUT — STRIPE & MONERIS",
+  "👕 CUSTOMIZATION AVAILABLE — ADD NAME & NUMBER",
 ];
 
-export default function RootLayout({ children }) {
-  const track = [...MARQUEE_TEXT, ...MARQUEE_TEXT];
+export default function Layout({ children }) {
+  const track = [...MSGS, ...MSGS];
   return (
     <html lang="en">
       <head>
@@ -43,59 +43,69 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
       </head>
       <body>
-        {/* Animated Announcement Bar */}
-        <div className="announcement-bar">
-          <div className="announcement-track">
-            {track.map((t, i) => (
-              <span key={i}>⚡ {t}</span>
-            ))}
+        {/* Announcement bar */}
+        <div className="ann-bar">
+          <div className="ann-track">
+            {track.map((m, i) => <span key={i}>{m}</span>)}
           </div>
         </div>
 
-        <header className="siteHeader">
-          <Link className="logo" href="/">KRUSHY<span>JERSEY</span></Link>
+        {/* Header */}
+        <header className="site-header">
+          <Link href="/" className="logo">KRUSHY<em>JERSEY</em></Link>
 
-          <nav>
-            <Link href="/shop">Shop All</Link>
-            {NAV.slice(0, 5).map(c => (
-              <Link key={c.slug} href={`/category/${c.slug}`}>{c.name}</Link>
+          <nav className="site-nav">
+            <Link href="/shop">All</Link>
+            {LEAGUES.slice(0, 5).map(l => (
+              <Link key={l.slug} href={`/category/${l.slug}`}>{l.name}</Link>
             ))}
-            <div className="nav-dropdown">
+            <div className="nav-drop">
               <span>More ▾</span>
-              <div className="dropdown-content">
-                {NAV.slice(5).map(c => (
-                  <Link key={c.slug} href={`/category/${c.slug}`}>{c.name}</Link>
+              <div className="nav-drop-menu">
+                {[...LEAGUES.slice(5), ...MORE].map(l => (
+                  <Link key={l.slug} href={`/category/${l.slug}`}>{l.name}</Link>
                 ))}
               </div>
             </div>
           </nav>
 
-          <div className="header-actions">
-            <button className="icon-btn" aria-label="Search"><Search size={18} /></button>
-            <Link href="/cart" className="icon-btn cart-btn" aria-label="Cart">
-              <ShoppingCart size={18} />
-              <span id="cart-count">0</span>
+          <div className="header-right">
+            <Link href="/cart" className="icon-btn cart-btn">
+              🛒 <span className="cart-count" id="cart-count">0</span>
             </Link>
           </div>
         </header>
 
         {children}
 
+        {/* Footer */}
         <footer>
-          <div className="footer-content">
-            <div className="footer-brand">
-              <h2>KRUSHY<span>JERSEY</span></h2>
-              <p>More than just a jersey.</p>
+          <div className="footer-inner">
+            <div className="footer-top">
+              <div className="footer-brand">
+                <div className="fl">KRUSHY<em>JERSEY</em></div>
+                <p>More than just a jersey.</p>
+              </div>
+              <div className="footer-links">
+                <Link href="/shop">Shop All</Link>
+                <Link href="/privacy">Privacy Policy</Link>
+                <Link href="/terms">Terms of Service</Link>
+                <Link href="/refund">Refund Policy</Link>
+                <Link href="/admin">Admin</Link>
+              </div>
             </div>
-            <div className="footer-links">
-              <Link href="/privacy">Privacy Policy</Link>
-              <Link href="/terms">Terms of Service</Link>
-              <Link href="/refund">Refund Policy</Link>
-              <Link href="/admin">Admin</Link>
-            </div>
+            <p className="footer-copy">© 2026 KrushyJersey. All rights reserved.</p>
           </div>
-          <p className="copyright">© 2026 KrushyJersey. All rights reserved.</p>
         </footer>
+
+        {/* Cart count sync */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            var c = JSON.parse(localStorage.getItem('krushy_cart') || '[]');
+            var el = document.getElementById('cart-count');
+            if (el) el.textContent = c.reduce(function(a,b){ return a+(b.qty||1); }, 0);
+          } catch(e){}
+        `}} />
       </body>
     </html>
   );
