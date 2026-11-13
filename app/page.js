@@ -3,117 +3,104 @@ import { getProducts } from "../lib/products";
 import ProductCard from "../components/ProductCard";
 import Intro from "../components/Intro";
 
-const SPORTS = [
-  { slug: "premier-league",    name: "Premier League",  emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", count: "1,262+" },
-  { slug: "la-liga",           name: "La Liga",         emoji: "🇪🇸", count: "1,593+" },
-  { slug: "bundesliga",        name: "Bundesliga",      emoji: "🇩🇪", count: "569+"   },
-  { slug: "serie-a",           name: "Serie A",         emoji: "🇮🇹", count: "640+"   },
-  { slug: "ligue-1-mcdonalds", name: "Ligue 1",         emoji: "🇫🇷", count: "495+"   },
-  { slug: "nba",               name: "NBA",             emoji: "🏀", count: "959+"   },
-  { slug: "nfl",               name: "NFL",             emoji: "🏈", count: "851+"   },
-  { slug: "national-team",     name: "National Teams",  emoji: "🌍", count: "3,222+" },
-  { slug: "retro-jerseys",     name: "Retro Jerseys",   emoji: "⏳", count: "641+"   },
-  { slug: "mlb",               name: "MLB",             emoji: "⚾", count: "1,283+" },
-  { slug: "nhl",               name: "NHL",             emoji: "🏒", count: "484+"   },
-  { slug: "mls",               name: "MLS",             emoji: "⚽", count: "196+"   },
+const ALL_CATS = [
+  { slug: "premier-league",          name: "Premier League",   count: "1,262" },
+  { slug: "la-liga",                 name: "La Liga",          count: "1,593" },
+  { slug: "national-team",           name: "National Teams",   count: "3,222" },
+  { slug: "mlb",                     name: "MLB",              count: "1,283" },
+  { slug: "nba",                     name: "NBA",              count: "959"   },
+  { slug: "nfl",                     name: "NFL",              count: "851"   },
+  { slug: "casual-clothing",         name: "Casual Clothing",  count: "1,227" },
+  { slug: "serie-a",                 name: "Serie A",          count: "640"   },
+  { slug: "retro-jerseys",           name: "Retro Jerseys",    count: "641"   },
+  { slug: "bundesliga",              name: "Bundesliga",       count: "569"   },
+  { slug: "nhl",                     name: "NHL",              count: "484"   },
+  { slug: "ligue-1-mcdonalds",       name: "Ligue 1",          count: "495"   },
+  { slug: "efl-championship-and-other", name: "EFL Championship", count: "230" },
+  { slug: "mls",                     name: "MLS",              count: "196"   },
 ];
 
 export default function Home() {
   const all       = getProducts();
-  const featured  = all.filter(p => p.categorySlug === "premier-league").slice(0, 4);
-  const newDrop   = all.filter(p => p.categorySlug === "la-liga").slice(0, 4);
-  const retro     = all.filter(p => p.categorySlug === "retro-jerseys").slice(0, 4);
+  // Sort newest first by ID for homepage previews
+  const sorted    = [...all].sort((a,b) => parseInt(b.id) - parseInt(a.id));
+  const featured  = sorted.filter(p => p.categorySlug === "premier-league").slice(0, 4);
+  const laLiga    = sorted.filter(p => p.categorySlug === "la-liga").slice(0, 4);
+  const retro     = sorted.filter(p => p.categorySlug === "retro-jerseys").slice(0, 4);
 
   return (
     <main>
       <Intro />
 
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section className="hero">
-        <div className="hero-bg-grid" />
-        <div className="hero-orb" />
-        <div className="hero-content">
-          <div className="hero-pill">New Drops Every Week</div>
-          <h1>
-            REP YOUR<br />
-            <span className="grad">CLUB.</span>
-          </h1>
-          <p className="hero-sub">16,000+ authentic jerseys across every league, team and era. Delivered worldwide.</p>
-          <div className="hero-tags">
-            {["Premier League", "La Liga", "NBA", "NFL", "Retro", "National Teams"].map(t => (
-              <span key={t} className="hero-tag">{t}</span>
-            ))}
-          </div>
-          <Link href="/shop" className="hero-cta">
-            Shop All Jerseys <span className="hero-arrow">→</span>
-          </Link>
-        </div>
-        <div className="hero-scroll">
-          <div className="hero-scroll-line" />
-          SCROLL
+        <div className="hero-inner">
+          <span className="hero-label">16,000+ Jerseys in Stock</span>
+          <h1>Rep Your<br /><span>Club.</span></h1>
+          <p className="hero-sub">
+            Authentic jerseys for every league, every club, every era.
+            Fast worldwide delivery.
+          </p>
+          <Link href="/shop" className="hero-cta">Shop All Jerseys →</Link>
         </div>
       </section>
 
-      {/* ── SHOP BY SPORT ── */}
+      {/* All categories */}
       <section className="section">
-        <p className="section-eyebrow">Browse</p>
-        <div className="section-head">
-          <h2>Shop by League</h2>
-          <Link href="/shop" className="section-link">All categories →</Link>
+        <div className="section-top">
+          <h2>All Categories</h2>
+          <Link href="/shop" className="section-link">Browse all →</Link>
         </div>
-        <div className="sport-grid">
-          {SPORTS.map(s => (
-            <Link key={s.slug} href={`/category/${s.slug}`} className="sport-card">
-              <span className="sport-emoji">{s.emoji}</span>
-              <span className="sport-name">{s.name}</span>
-              <span className="sport-count">{s.count}</span>
+        <div className="cat-grid">
+          {ALL_CATS.map(c => (
+            <Link key={c.slug} href={`/category/${c.slug}`} className="cat-tile">
+              <span className="cat-tile-name">{c.name}</span>
+              <span className="cat-tile-count">{c.count} items</span>
+              <span className="cat-tile-arr">→</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* ── PREMIER LEAGUE ── */}
+      {/* Premier League */}
       <section className="section" style={{ paddingTop: 0 }}>
-        <p className="section-eyebrow">England</p>
-        <div className="section-head">
-          <h2>Premier League</h2>
+        <div className="section-top">
+          <h2>Premier League — New In</h2>
           <Link href="/category/premier-league" className="section-link">See all →</Link>
         </div>
-        <div className="product-grid">
+        <div className="product-grid" style={{ border: "1px solid var(--line)" }}>
           {featured.map(p => <ProductCard key={p.slug} product={p} />)}
         </div>
       </section>
 
-      {/* ── LA LIGA ── */}
+      {/* La Liga */}
       <section className="section" style={{ paddingTop: 0 }}>
-        <p className="section-eyebrow">Spain</p>
-        <div className="section-head">
-          <h2>La Liga</h2>
+        <div className="section-top">
+          <h2>La Liga — New In</h2>
           <Link href="/category/la-liga" className="section-link">See all →</Link>
         </div>
-        <div className="product-grid">
-          {newDrop.map(p => <ProductCard key={p.slug} product={p} />)}
+        <div className="product-grid" style={{ border: "1px solid var(--line)" }}>
+          {laLiga.map(p => <ProductCard key={p.slug} product={p} />)}
         </div>
       </section>
 
-      {/* ── RETRO ── */}
+      {/* Retro */}
       <section className="section" style={{ paddingTop: 0 }}>
-        <p className="section-eyebrow">Classic</p>
-        <div className="section-head">
+        <div className="section-top">
           <h2>Retro Jerseys</h2>
           <Link href="/category/retro-jerseys" className="section-link">See all →</Link>
         </div>
-        <div className="product-grid">
+        <div className="product-grid" style={{ border: "1px solid var(--line)" }}>
           {retro.map(p => <ProductCard key={p.slug} product={p} />)}
         </div>
       </section>
 
-      {/* ── BENEFITS ── */}
+      {/* Benefits */}
       <div className="benefits-row">
         {[
-          { icon: "🚀", title: "Fast Worldwide Shipping",   desc: "Tracked delivery in 7–14 business days. Free on orders over $150 CAD." },
-          { icon: "⭐", title: "Premium Quality Guarantee", desc: "Professional-grade stitching and breathable fabric — or your money back." },
-          { icon: "🔒", title: "Secure Payment",            desc: "SSL-encrypted checkout with Stripe & Moneris. Your data is always safe." },
+          { icon: "📦", title: "Fast Shipping",    desc: "Worldwide in 7–14 days. Free over $150 CAD." },
+          { icon: "✅", title: "Quality Guarantee", desc: "Premium stitching — or your money back." },
+          { icon: "🔐", title: "Secure Payment",    desc: "SSL encrypted. Powered by Stripe & Moneris." },
         ].map(b => (
           <div key={b.title} className="benefit-card">
             <div className="benefit-icon">{b.icon}</div>
