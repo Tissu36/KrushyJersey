@@ -4,9 +4,10 @@ import { useState } from "react";
 import { productImageSrc } from "../lib/product-image";
 
 export default function ProductCard({ product }) {
-  const [failed, setFailed] = useState(false);
-  // The catalogue data stores the front/primary photo first.
-  const src = productImageSrc(product.images?.[0]);
+  const [imageIndex, setImageIndex] = useState(0);
+  // Legacy catalogue ordering: the full front shot is stored last.
+  const candidates = (product.images || []).slice().reverse().map(productImageSrc).filter(Boolean);
+  const src = candidates[imageIndex] || null;
   const price = (product.price * 1.1).toFixed(2);
   const cat = (product.categorySlug || product.category || "")
     .replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
@@ -14,8 +15,9 @@ export default function ProductCard({ product }) {
   return (
     <Link className="product-card" href={`/product/${product.slug}`} prefetch={false}>
       <div className="product-visual">
-        {src && !failed
-          ? <img src={src} alt={product.name} loading="lazy" onError={() => setFailed(true)} />
+        {src
+          ? <img src={src} alt={product.name} loading="lazy"
+              onError={() => setImageIndex(i => i + 1)} />
           : <div className="img-placeholder"><span className="ph-icon">👕</span><p className="ph-name">{product.name}</p></div>
         }
       </div>
