@@ -5,14 +5,16 @@ export default function ProductGallery({ images, name }) {
   const [active, setActive] = useState(0);
   const [failed, setFailed] = useState({});
 
+  // The crawler records detail/back shots first and the full front view last.
+  const frontFirst = [...(images || [])].reverse();
   const src = (img) => `/images/${(img || "").replace(/^images\//, "")}`;
 
   return (
     <div className="pdp-gallery">
       <div className="pdp-main-img">
-        {images[active] && !failed[active] ? (
+        {frontFirst[active] && !failed[active] ? (
           <img
-            src={src(images[active])}
+            src={src(frontFirst[active])}
             alt={`${name} — view ${active + 1}`}
             onError={() => setFailed(f => ({ ...f, [active]: true }))}
           />
@@ -23,9 +25,9 @@ export default function ProductGallery({ images, name }) {
           </div>
         )}
       </div>
-      {images.length > 1 && (
+      {frontFirst.length > 1 && (
         <div className="pdp-thumbs">
-          {images.slice(0, 6).map((img, i) => (
+          {frontFirst.slice(0, 6).map((img, i) => (
             <div
               key={i}
               className={`pdp-thumb${active === i ? " active" : ""}`}
