@@ -34,6 +34,11 @@ const TYPE_FILTERS = [
   { key: "player",    label: "Player Version",      terms: ["player version", "player ver"] },
 ];
 
+function isCasualProduct(product) {
+  const tags = [product.categorySlug, product.category, ...(product.categories || [])].filter(Boolean);
+  return tags.includes("casual-clothing");
+}
+
 function matchesType(filter, nameLow) {
   if (!filter.terms.length) return true;
   return filter.terms.some(t => nameLow.includes(t));
@@ -48,9 +53,10 @@ export default async function CategoryPage({ params, searchParams }) {
   const q        = (sp.q || "").toLowerCase().trim();
 
   // Get all products for this category
-  let base = getProducts().filter(p =>
-    p.categorySlug === slug || (p.categories || []).includes(slug)
-  );
+  let base = getProducts().filter(p => {
+    if (slug === "casual-clothing") return isCasualProduct(p);
+    return !isCasualProduct(p) && (p.categorySlug === slug || (p.categories || []).includes(slug));
+  });
 
   if (!base.length) return (
     <main>
@@ -120,6 +126,9 @@ export default async function CategoryPage({ params, searchParams }) {
         <p className="breadcrumb">
           <Link href="/shop">Shop</Link> / {name}
         </p>
+        {({ "premier-league": "premier-league", "la-liga": "la-liga", "serie-a": "serie-a", "bundesliga": "bundesliga", "ligue-1-mcdonalds": "ligue-1" })[slug] && (
+          <img className="category-league-badge" src={`/badges/${({ "premier-league": "premier-league", "la-liga": "la-liga", "serie-a": "serie-a", "bundesliga": "bundesliga", "ligue-1-mcdonalds": "ligue-1" })[slug]}.svg`} alt={`${name} badge`} />
+        )}
         <h1>{name}</h1>
         <p>{total.toLocaleString()} items{type !== "all" ? ` — ${activeFilter.label}` : ""}{club !== "all" ? ` — ${club.replace(/-/g," ").toUpperCase()}` : ""}</p>
       </div>
