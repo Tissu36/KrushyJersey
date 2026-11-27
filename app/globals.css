@@ -400,3 +400,11 @@ footer{padding:48px 40px 32px;border-top:1px solid var(--line)}
   .cart-layout{padding:24px 16px}
   .hero h1{font-size:clamp(44px,13vw,80px)}
 }
+
+
+/* League identity and consistent front-facing product photography */
+.cat-tile-badge{width:42px;height:42px;object-fit:contain;margin-bottom:4px}
+.category-league-badge{width:62px;height:62px;object-fit:contain;margin:0 0 14px}
+.product-visual img,.pdp-main-img img{object-fit:contain;background:#111;padding:8px}
+.product-visual{background:#111}
+@media(max-width:640px){.cat-tile-badge{width:34px;height:34px}.category-league-badge{width:48px;height:48px}}
