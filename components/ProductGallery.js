@@ -1,48 +1,34 @@
 "use client";
 import { useState } from "react";
+import { productImageSrc } from "../lib/product-image";
 
 export default function ProductGallery({ images, name }) {
   const [active, setActive] = useState(0);
   const [failed, setFailed] = useState({});
-
-  // The crawler records detail/back shots first and the full front view last.
-  const frontFirst = [...(images || [])].reverse();
-  const src = (img) => `/images/${(img || "").replace(/^images\//, "")}`;
+  // Keep the source order: the first image is the primary/front view.
+  const galleryImages = (images || []).filter(Boolean);
+  const src = (img) => productImageSrc(img);
 
   return (
     <div className="pdp-gallery">
       <div className="pdp-main-img">
-        {frontFirst[active] && !failed[active] ? (
-          <img
-            src={src(frontFirst[active])}
-            alt={`${name} — view ${active + 1}`}
-            onError={() => setFailed(f => ({ ...f, [active]: true }))}
-          />
+        {galleryImages[active] && !failed[active] ? (
+          <img src={src(galleryImages[active])} alt={`${name} — view ${active + 1}`}
+            onError={() => setFailed(f => ({ ...f, [active]: true }))} />
         ) : (
           <div className="img-placeholder" style={{ height: "100%" }}>
-            <span className="ph-icon">👕</span>
-            <p className="ph-name">{name}</p>
+            <span className="ph-icon">👕</span><p className="ph-name">{name}</p>
           </div>
         )}
       </div>
-      {frontFirst.length > 1 && (
+      {galleryImages.length > 1 && (
         <div className="pdp-thumbs">
-          {frontFirst.slice(0, 6).map((img, i) => (
-            <div
-              key={i}
-              className={`pdp-thumb${active === i ? " active" : ""}`}
-              onClick={() => setActive(i)}
-            >
-              {!failed[i] ? (
-                <img
-                  src={src(img)}
-                  alt={`${name} ${i + 1}`}
-                  onError={() => setFailed(f => ({ ...f, [i]: true }))}
-                />
-              ) : (
-                <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>👕</div>
-              )}
-            </div>
+          {galleryImages.slice(0, 6).map((img, i) => (
+            <button type="button" key={img} className={`pdp-thumb${active === i ? " active" : ""}`}
+              onClick={() => setActive(i)} aria-label={`Show image ${i + 1}`}>
+              {!failed[i] ? <img src={src(img)} alt={`${name} ${i + 1}`}
+                onError={() => setFailed(f => ({ ...f, [i]: true }))} /> : <span aria-hidden="true">👕</span>}
+            </button>
           ))}
         </div>
       )}
