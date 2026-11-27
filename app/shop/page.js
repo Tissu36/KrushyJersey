@@ -36,7 +36,11 @@ export default async function Shop({ searchParams }) {
       (p.category || "").toLowerCase().replace(/-/g, " ").includes(q)
     );
   }
-  if (cat) all = all.filter(p => p.categorySlug === cat || (p.categories || []).includes(cat));
+  if (cat === "casual-clothing") {
+    all = all.filter(p => p.categorySlug === cat || (p.categories || []).includes(cat) || p.category === cat);
+  } else if (cat) {
+    all = all.filter(p => ![p.categorySlug, p.category, ...(p.categories || [])].includes("casual-clothing") && (p.categorySlug === cat || (p.categories || []).includes(cat)));
+  }
 
   // Sort newest first
   all = [...all].sort((a, b) => parseInt(b.id) - parseInt(a.id));
