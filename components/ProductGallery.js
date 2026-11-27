@@ -5,16 +5,20 @@ import { productImageSrc } from "../lib/product-image";
 export default function ProductGallery({ images, name }) {
   const [active, setActive] = useState(0);
   const [failed, setFailed] = useState({});
-  // Keep the source order: the first image is the primary/front view.
-  const galleryImages = (images || []).filter(Boolean);
+  // In the imported catalogue the front/primary view is last; show it first.
+  const galleryImages = [...(images || [])].filter(Boolean).reverse();
   const src = (img) => productImageSrc(img);
+  const mainIndex = failed[active]
+    ? galleryImages.findIndex((img, i) => i > active && !failed[i])
+    : active;
+  const mainImage = mainIndex >= 0 ? galleryImages[mainIndex] : null;
 
   return (
     <div className="pdp-gallery">
       <div className="pdp-main-img">
-        {galleryImages[active] && !failed[active] ? (
-          <img src={src(galleryImages[active])} alt={`${name} — view ${active + 1}`}
-            onError={() => setFailed(f => ({ ...f, [active]: true }))} />
+        {mainImage ? (
+          <img src={src(mainImage)} alt={`${name} — view ${mainIndex + 1}`}
+            onError={() => setFailed(f => ({ ...f, [mainIndex]: true }))} />
         ) : (
           <div className="img-placeholder" style={{ height: "100%" }}>
             <span className="ph-icon">👕</span><p className="ph-name">{name}</p>
