@@ -4,18 +4,18 @@ import ProductCard from "../components/ProductCard";
 import Intro from "../components/Intro";
 
 const ALL_CATS = [
-  { slug: "premier-league",          name: "Premier League",   count: "1,262" },
-  { slug: "la-liga",                 name: "La Liga",          count: "1,593" },
+  { slug: "premier-league",          name: "Premier League",   count: "1,262", badge: "premier-league" },
+  { slug: "la-liga",                 name: "La Liga",          count: "1,593", badge: "la-liga" },
   { slug: "national-team",           name: "National Teams",   count: "3,222" },
   { slug: "mlb",                     name: "MLB",              count: "1,283" },
   { slug: "nba",                     name: "NBA",              count: "959"   },
   { slug: "nfl",                     name: "NFL",              count: "851"   },
   { slug: "casual-clothing",         name: "Casual Clothing",  count: "1,227" },
-  { slug: "serie-a",                 name: "Serie A",          count: "640"   },
+  { slug: "serie-a",                 name: "Serie A",          count: "640", badge: "serie-a"   },
   { slug: "retro-jerseys",           name: "Retro Jerseys",    count: "641"   },
-  { slug: "bundesliga",              name: "Bundesliga",       count: "569"   },
+  { slug: "bundesliga",              name: "Bundesliga",       count: "569", badge: "bundesliga"   },
   { slug: "nhl",                     name: "NHL",              count: "484"   },
-  { slug: "ligue-1-mcdonalds",       name: "Ligue 1",          count: "495"   },
+  { slug: "ligue-1-mcdonalds",       name: "Ligue 1",          count: "495", badge: "ligue-1"   },
   { slug: "efl-championship-and-other", name: "EFL Championship", count: "230" },
   { slug: "mls",                     name: "MLS",              count: "196"   },
 ];
@@ -54,6 +54,7 @@ export default function Home() {
         <div className="cat-grid">
           {ALL_CATS.map(c => (
             <Link key={c.slug} href={`/category/${c.slug}`} className="cat-tile">
+              {c.badge && <img className="cat-tile-badge" src={`/badges/${c.badge}.svg`} alt="" loading="lazy" />}
               <span className="cat-tile-name">{c.name}</span>
               <span className="cat-tile-count">{c.count} items</span>
               <span className="cat-tile-arr">→</span>
