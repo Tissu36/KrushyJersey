@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { productImageSrc } from "../lib/product-image";
 
 export default function ProductCard({ product }) {
   const [failed, setFailed] = useState(false);
-  // The catalogue crawler stores the full front view last; use it as the card cover.
-  const raw   = product.images?.[product.images.length - 1];
-  const src   = raw ? `/images/${raw.replace(/^images\//, "")}` : null;
+  // The catalogue data stores the front/primary photo first.
+  const src = productImageSrc(product.images?.[0]);
   const price = (product.price * 1.1).toFixed(2);
-  const cat   = (product.categorySlug || product.category || "")
+  const cat = (product.categorySlug || product.category || "")
     .replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 
   return (
