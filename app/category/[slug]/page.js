@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProducts } from "../../../lib/products";
 import ProductCard from "../../../components/ProductCard";
+import { LEAGUE_BADGES } from "../../../lib/league-badges";
 
 const PER_PAGE = 48;
 
@@ -126,8 +127,8 @@ export default async function CategoryPage({ params, searchParams }) {
         <p className="breadcrumb">
           <Link href="/shop">Shop</Link> / {name}
         </p>
-        {({ "premier-league": "premier-league", "la-liga": "la-liga", "serie-a": "serie-a", "bundesliga": "bundesliga", "ligue-1-mcdonalds": "ligue-1" })[slug] && (
-          <img className="category-league-badge" src={`/badges/${({ "premier-league": "premier-league", "la-liga": "la-liga", "serie-a": "serie-a", "bundesliga": "bundesliga", "ligue-1-mcdonalds": "ligue-1" })[slug]}.svg`} alt={`${name} badge`} />
+        {LEAGUE_BADGES[slug] && (
+          <img className="category-league-badge" src={LEAGUE_BADGES[slug].src} alt={LEAGUE_BADGES[slug].alt} referrerPolicy="no-referrer" />
         )}
         <h1>{name}</h1>
         <p>{total.toLocaleString()} items{type !== "all" ? ` — ${activeFilter.label}` : ""}{club !== "all" ? ` — ${club.replace(/-/g," ").toUpperCase()}` : ""}</p>
