@@ -4,7 +4,8 @@ import { useState } from "react";
 
 export default function ProductCard({ product }) {
   const [failed, setFailed] = useState(false);
-  const raw   = product.images?.[0];
+  // The catalogue crawler stores the full front view last; use it as the card cover.
+  const raw   = product.images?.[product.images.length - 1];
   const src   = raw ? `/images/${raw.replace(/^images\//, "")}` : null;
   const price = (product.price * 1.1).toFixed(2);
   const cat   = (product.categorySlug || product.category || "")
