@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getProducts } from "../lib/products";
 import ProductCard from "../components/ProductCard";
 import Intro from "../components/Intro";
+import { LEAGUE_BADGES } from "../lib/league-badges";
 
 const ALL_CATS = [
   { slug: "premier-league",          name: "Premier League",   count: "1,262", badge: "premier-league" },
@@ -15,7 +16,7 @@ const ALL_CATS = [
   { slug: "retro-jerseys",           name: "Retro Jerseys",    count: "641"   },
   { slug: "bundesliga",              name: "Bundesliga",       count: "569", badge: "bundesliga"   },
   { slug: "nhl",                     name: "NHL",              count: "484"   },
-  { slug: "ligue-1-mcdonalds",       name: "Ligue 1",          count: "495", badge: "ligue-1"   },
+  { slug: "ligue-1-mcdonalds",       name: "Ligue 1",          count: "495", badge: "ligue-1-mcdonalds"   },
   { slug: "efl-championship-and-other", name: "EFL Championship", count: "230" },
   { slug: "mls",                     name: "MLS",              count: "196"   },
 ];
@@ -54,7 +55,7 @@ export default function Home() {
         <div className="cat-grid">
           {ALL_CATS.map(c => (
             <Link key={c.slug} href={`/category/${c.slug}`} className="cat-tile">
-              {c.badge && <img className="cat-tile-badge" src={`/badges/${c.badge}.svg`} alt="" loading="lazy" />}
+              {c.badge && LEAGUE_BADGES[c.badge] && <img className="cat-tile-badge" src={LEAGUE_BADGES[c.badge].src} alt={LEAGUE_BADGES[c.badge].alt} loading="lazy" referrerPolicy="no-referrer" />}
               <span className="cat-tile-name">{c.name}</span>
               <span className="cat-tile-count">{c.count} items</span>
               <span className="cat-tile-arr">→</span>
