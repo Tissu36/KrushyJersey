@@ -1,40 +1,31 @@
-"use client";
 import Link from "next/link";
-import { useState } from "react";
-import { productImageSrc } from "../lib/product-image";
+import { Heart } from "lucide-react";
+import ProductImage from "./ProductImage";
 
 export default function ProductCard({ product }) {
-  const images = (Array.isArray(product.images) ? product.images : [])
-    .map(productImageSrc).filter(Boolean);
-  const [imageIndex, setImageIndex] = useState(0);
-  const src = images[imageIndex] || null;
-  const price = (Number(product.price || 0) * 1.1).toFixed(2);
-  const cat = (product.categorySlug || product.category || "")
-    .replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  const price = (parseFloat(product.price) * 1.10).toFixed(2);
+  const rawImg = product.images && product.images.length > 0 ? product.images[0] : null;
+  
+  // Never use a local placeholder (which might be Pele). Use a clean dark text placeholder.
+  const imgSrc = rawImg 
+    ? (rawImg.startsWith('/') ? rawImg : `/images/${rawImg}`) 
+    : "https://placehold.co/600x800/111114/8B5CF6?text=KrushyJersey";
 
   return (
-    <Link className="product-card" href={`/product/${product.slug}`} prefetch={false}>
-      <div className="product-visual">
-        {src ? (
-          <img
-            src={src}
-            alt={product.name}
-            loading="lazy"
-            decoding="async"
-            onError={() => setImageIndex(i => i + 1)}
-          />
-        ) : (
-          <div className="img-placeholder">
-            <span className="ph-icon">👕</span>
-            <p className="ph-name">{product.name}</p>
-          </div>
-        )}
+    <div className="card">
+      <div className="card-img-wrap">
+        <Link href={`/product/${product.slug}`}>
+          <ProductImage src={imgSrc} alt={product.name} />
+        </Link>
+        {product.customizable && <span className="card-badge">NEW</span>}
+        <button className="card-heart"><Heart size={14} /></button>
       </div>
-      <div className="product-info">
-        <p className="product-category">{cat}</p>
-        <h3 className="product-name">{product.name}</h3>
-        <p className="product-price">${price} CAD</p>
+      <Link href={`/product/${product.slug}`}>
+        <h3 className="card-title">{product.name}</h3>
+      </Link>
+      <div className="card-price-row">
+        <span className="card-price">${price} CAD</span>
       </div>
-    </Link>
+    </div>
   );
 }
