@@ -3,13 +3,13 @@ import { getProducts } from "../../lib/products";
 import ProductCard from "../../components/ProductCard";
 
 export default function ShopPage() {
-  const products = getProducts().slice(0, 48); // Loads 48 for performance
+  const products = getProducts().slice(0, 48); 
 
   return (
     <main className="page-container">
       <div className="page-header">
         <h1>Shop All</h1>
-        <p>{products.length} items</p>
+        <p>Showing 48 of 18,000+ jerseys</p>
       </div>
       
       <div className="product-grid">
