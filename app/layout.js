@@ -10,9 +10,7 @@ export default function RootLayout({ children }) {
       <body>
         <header className="top-header">
           <div className="nav-inner">
-            <Link href="/" className="nav-logo">
-              KRUSHY<span>JERSEY</span>
-            </Link>
+            <Link href="/" className="nav-logo">KRUSHY<span>JERSEY</span></Link>
             <div className="header-icons">
               <Search size={20} />
               <User size={20} />
